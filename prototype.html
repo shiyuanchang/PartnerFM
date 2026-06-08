@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拾元文件夹</title>
+<style>
+/* ========== 基础 ========== */
+:root {
+  --bg: #f2f2f7;
+  --bg-card: #ffffff;
+  --bg-sidebar: rgba(248,248,252,0.85);
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #aeaeb2;
+  --accent: #007AFF;
+  --accent-hover: #0060d0;
+  --border: #e5e5ea;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --sidebar-width: 300px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Cascadia Code", monospace;
+}
+
+/* ========== 全局 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========== 布局 ========== */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ========== 侧边栏 ========== */
+#sidebar {
+  width: var(--sidebar-width);
+  min-width: 220px;
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  resize: horizontal;
+  overflow: hidden;
+}
+
+/* 侧边栏顶部 */
+.sidebar-top {
+  padding: 20px 16px 12px;
+}
+.sidebar-top h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--text);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sidebar-top h1 .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+/* 搜索框 */
+.search-wrap {
+  position: relative;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 7px 10px 7px 28px;
+  font-size: 13px;
+  background: #e5e5ea;
+  color: var(--text);
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  font-family: var(--font);
+  transition: background 0.15s;
+}
+.search-wrap input:focus {
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+}
+.search-wrap input::placeholder { color: var(--text-tertiary); }
+.search-wrap .search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+/* 文件夹列表 */
+#folder-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 8px 8px;
+}
+#folder-list::-webkit-scrollbar { width: 4px; }
+#folder-list::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 2px; }
+#folder-list::-webkit-scrollbar-track { background: transparent; }
+
+/* 每个文件夹卡片 */
+.folder-section {
+  margin-bottom: 4px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  gap: 4px;
+  transition: background 0.1s;
+  position: relative;
+}
+.folder-header:hover { background: rgba(0,0,0,0.04); }
+.folder-header .folder-chevron {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--text-secondary);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.folder-header .folder-chevron.expanded { transform: rotate(90deg); }
+.folder-header .folder-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.folder-header .folder-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.folder-header .folder-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.folder-header:hover .folder-actions { opacity: 1; }
+.folder-header .folder-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.1s;
+}
+.folder-header .folder-btn:hover { background: rgba(0,0,0,0.08); color: var(--text); }
+.folder-header .folder-btn.danger:hover { color: #ff3b30; }
+
+.folder-children {
+  display: none;
+}
+.folder-children.open { display: block; }
+
+/* 文件树节点 */
+.tree-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 8px 3px 24px;
+  cursor: pointer;
+  font-size: 12.5px;
+  white-space: nowrap;
+  border-radius: 4px;
+  margin: 0 4px;
+  transition: background 0.1s;
+  gap: 4px;
+  color: var(--text-secondary);
+  position: relative;
+}
+.tree-item:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+.tree-item.active { background: rgba(0,122,255,0.1); color: var(--accent); font-weight: 500; }
+.tree-item .item-icon { width: 15px; text-align: center; flex-shrink: 0; font-size: 13px; }
+.tree-item .item-name { overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.tree-item.depth-1 { padding-left: 38px; }
+.tree-item.depth-2 { padding-left: 52px; }
+.tree-item.depth-3 { padding-left: 66px; }
+
+/* 侧边栏底部 */
+.sidebar-bottom {
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 4px;
+}
+.sidebar-bottom button {
+  flex: 1;
+  padding: 6px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+.sidebar-bottom button:hover { background: #f0f0f5; }
+.sidebar-bottom button.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.sidebar-bottom button.primary:hover { background: var(--accent-hover); }
+
+/* 拖拽提示 */
+#sidebar.drag-over {
+  background: rgba(0,122,255,0.06);
+  outline: 3px dashed var(--accent);
+  outline-offset: -3px;
+}
+.drop-hint {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  pointer-events: none;
+  z-index: 10;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+#sidebar.drag-over .drop-hint { display: flex; }
+
+#sidebar { position: relative; }
+
+/* ========== 主内容区 ========== */
+#main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ========== 标签栏 ========== */
+#tab-bar {
+  display: flex;
+  background: #f8f8fc;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  min-height: 38px;
+}
+#tab-bar::-webkit-scrollbar { height: 0; }
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 0;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border);
+  transition: all 0.1s;
+  position: relative;
+}
+.tab:hover { background: rgba(0,0,0,0.03); }
+.tab.active {
+  background: #fff;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: -1px;
+  border-bottom: 2px solid var(--accent);
+}
+.tab .tab-icon { font-size: 14px; flex-shrink: 0; }
+.tab .tab-name { overflow: hidden; text-overflow: ellipsis; }
+.tab .tab-close {
+  width: 18px; height: 18px;
+  display: flex;
+  align-items: center; justify-content: center;
+  border-radius: 3px;
+  font-size: 15px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.1s;
+  line-height: 1;
+}
+.tab:hover .tab-close { opacity: 0.5; }
+.tab .tab-close:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+
+/* ========== 内容区 ========== */
+#content-area {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* 欢迎页 */
+#welcome-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  gap: 10px;
+}
+#welcome-page .welcome-icon { font-size: 52px; margin-bottom: 4px; }
+#welcome-page h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+#welcome-page p { font-size: 14px; }
+#welcome-page .shortcuts {
+  margin-top: 24px;
+  background: var(--bg);
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  line-height: 2.2;
+  box-shadow: var(--shadow);
+}
+#welcome-page .shortcuts kbd {
+  background: #fff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+
+/* 文件面板 */
+.file-panel {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+.file-panel.visible { display: flex; }
+
+.text-viewer {
+  padding: 24px 32px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow: auto;
+  flex: 1;
+  color: #333;
+}
+
+.md-viewer {
+  padding: 24px 36px;
+  overflow: auto;
+  flex: 1;
+  line-height: 1.85;
+  color: #333;
+  max-width: 860px;
+}
+
+/* MD 工具栏 */
+.md-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #f8f8fc;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.md-toolbar .md-mode-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--font);
+  color: var(--text);
+  transition: all 0.1s;
+}
+.md-toolbar .md-mode-btn:hover { background: #f0f0f5; }
+.md-toolbar .md-mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.md-toolbar .md-save-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 500;
+  margin-left: auto;
+  transition: all 0.1s;
+}
+.md-toolbar .md-save-btn:hover { background: var(--accent-hover); }
+.md-toolbar .md-save-btn.saved { background: #34c759; }
+.md-toolbar .md-modified {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-left: 8px;
+}
+
+/* MD 编辑器 */
+.md-editor {
+  flex: 1;
+  width: 100%;
+  padding: 24px 36px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  border: none;
+  outline: none;
+  resize: none;
+  color: #333;
+  background: #fff;
+  tab-size: 2;
+}
+.md-viewer h1 { font-size: 28px; font-weight: 700; margin: 24px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #e5e5ea; letter-spacing: -0.4px; }
+.md-viewer h2 { font-size: 22px; font-weight: 600; margin: 18px 0 10px; }
+.md-viewer h3 { font-size: 17px; font-weight: 600; margin: 14px 0 8px; }
+.md-viewer p { margin: 8px 0; }
+.md-viewer code {
+  background: #f2f2f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #ff3b30;
+}
+.md-viewer pre {
+  background: #f2f2f7;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 12px 0;
+}
+.md-viewer pre code { background: none; padding: 0; color: #333; }
+.md-viewer ul, .md-viewer ol { padding-left: 24px; margin: 8px 0; }
+.md-viewer blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 6px 16px;
+  margin: 12px 0;
+  color: var(--text-secondary);
+  background: #f8f8fc;
+  border-radius: 0 6px 6px 0;
+}
+.md-viewer a { color: var(--accent); }
+.md-viewer table { border-collapse: collapse; margin: 12px 0; width: 100%; }
+.md-viewer th, .md-viewer td { border: 1px solid #e5e5ea; padding: 8px 14px; text-align: left; }
+.md-viewer th { background: #f8f8fc; font-weight: 600; }
+
+.html-viewer {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+.image-viewer-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2f2f7;
+  overflow: auto;
+}
+.image-viewer-wrap img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+  box-shadow: var(--shadow-lg);
+  border-radius: 4px;
+}
+
+.pdf-viewer {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+.office-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+}
+.office-info .office-icon { font-size: 72px; }
+.office-info .office-name { font-size: 17px; font-weight: 600; color: var(--text); }
+.office-info .office-meta { font-size: 13px; color: var(--text-secondary); }
+.office-info .office-hint {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 8px;
+  background: var(--bg);
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+/* ========== 快速切换 ========== */
+#quick-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 18vh;
+}
+#quick-overlay.open { display: flex; }
+
+#quick-panel {
+  width: 520px;
+  max-width: 92vw;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+#quick-input {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 17px;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  outline: none;
+  font-family: var(--font);
+  border-bottom: 1px solid var(--border);
+}
+#quick-input::placeholder { color: var(--text-tertiary); }
+#quick-results { max-height: 340px; overflow-y: auto; }
+#quick-results::-webkit-scrollbar { width: 4px; }
+#quick-results::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 2px; }
+
+.quick-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 20px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.08s;
+}
+.quick-result:hover, .quick-result.selected { background: rgba(0,122,255,0.08); }
+.quick-result .qr-icon { font-size: 16px; flex-shrink: 0; }
+.quick-result .qr-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.quick-result .qr-path {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========== 状态栏 ========== */
+#status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px;
+  font-size: 11px;
+  background: #f8f8fc;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border);
+  min-height: 26px;
+}
+
+/* ========== 右键菜单 ========== */
+#context-menu {
+  display: none;
+  position: fixed;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 2000;
+  padding: 4px 0;
+  min-width: 190px;
+}
+#context-menu.open { display: block; }
+.context-menu-item {
+  padding: 7px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  transition: background 0.08s;
+}
+.context-menu-item:hover { background: rgba(0,122,255,0.08); color: var(--accent); }
+.context-menu-item.danger:hover { background: rgba(255,59,48,0.08); color: #ff3b30; }
+.context-menu-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* ========== 输入弹窗 ========== */
+#modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+#modal-overlay.open { display: flex; }
+#modal-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  padding: 24px;
+  width: 400px;
+  max-width: 92vw;
+}
+#modal-box h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+#modal-box .field {
+  margin-bottom: 12px;
+}
+#modal-box .field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+#modal-box input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  font-family: var(--font);
+  color: var(--text);
+}
+#modal-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,122,255,0.12); }
+#modal-box select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  font-family: var(--font);
+  color: var(--text);
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236e6e73' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+#modal-box select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,122,255,0.12); }
+#modal-box .location-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#modal-box .location-row span {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 0;
+}
+#modal-box .location-row .loc-btn {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--font);
+  color: var(--accent);
+  white-space: nowrap;
+}
+#modal-box .location-row .loc-btn:hover { background: #f0f0f5; }
+#modal-box .modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+#modal-box .modal-btns button {
+  padding: 6px 16px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 500;
+}
+#modal-box .btn-cancel { background: #f2f2f7; color: var(--text); }
+#modal-box .btn-cancel:hover { background: #e5e5ea; }
+#modal-box .btn-confirm { background: var(--accent); color: #fff; }
+#modal-box .btn-confirm:hover { background: var(--accent-hover); }
+
+/* ========== 空状态 ========== */
+.empty-state {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 600px) {
+  #sidebar { width: 100% !important; min-width: 0; }
+  #main-panel { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="main-layout">
+    <!-- 侧边栏 -->
+    <aside id="sidebar">
+      <div class="drop-hint">📂 松手添加文件夹</div>
+      <div class="sidebar-top">
+        <h1><span class="dot"></span>拾元文件夹</h1>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="搜索文件...">
+        </div>
+      </div>
+      <div id="folder-list"></div>
+      <div class="sidebar-bottom">
+        <button id="add-folder-btn" class="primary">📂 添加文件夹</button>
+        <button id="new-file-btn">📄 新建文件</button>
+        <button id="refresh-btn">🔄 刷新</button>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div id="main-panel">
+      <div id="tab-bar"></div>
+      <div id="content-area">
+        <div id="welcome-page">
+          <div class="welcome-icon">🗂️</div>
+          <h2>拾元文件夹</h2>
+          <p>点击「添加文件夹」选择单个文件夹，或从访达拖入多个文件夹</p>
+          <div class="shortcuts">
+            <div><kbd>⌘P</kbd> 快速搜索文件</div>
+            <div><kbd>⌘W</kbd> 关闭当前标签</div>
+            <div><kbd>⌘⇧T</kbd> 恢复关闭的标签</div>
+            <div style="margin-top:4px">从访达拖入文件夹可一次添加多个</div>
+            <div>右键文件夹或文件进行操作</div>
+          </div>
+        </div>
+      </div>
+      <div id="status-bar">
+        <span id="status-left">就绪</span>
+        <span id="status-right"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 右键菜单 -->
+<div id="context-menu"></div>
+
+<!-- 输入弹窗（新建/重命名） -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <h3 id="modal-title"></h3>
+    <div class="field">
+      <label>文件名</label>
+      <input type="text" id="modal-input" placeholder="" autocomplete="off">
+    </div>
+    <div class="field" id="modal-type-field" style="display:none">
+      <label>文件类型</label>
+      <select id="modal-type-select"></select>
+    </div>
+    <div class="field" id="modal-location-field" style="display:none">
+      <label>保存位置</label>
+      <div class="location-row">
+        <span id="modal-location-text">未选择</span>
+        <button class="loc-btn" id="modal-location-btn">选择文件夹</button>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="modal-cancel">取消</button>
+      <button class="btn-confirm" id="modal-confirm">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 快速搜索 -->
+<div id="quick-overlay">
+  <div id="quick-panel">
+    <input type="text" id="quick-input" placeholder="搜索文件名...">
+    <div id="quick-results"></div>
+  </div>
+</div>
+
+<script>
+// ========== 数据库（IndexedDB 持久化文件夹句柄）==========
+const DB_NAME = 'file-manager-db';
+const DB_VERSION = 1;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('folders')) {
+        db.createObjectStore('folders', { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function saveFolderHandle(id, name) {
+  const db = await openDB();
+  // FileSystemDirectoryHandle 不能直接存 IndexedDB
+  // 存文件夹名称，重新打开时请求权限
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('folders', 'readwrite');
+    const store = tx.objectStore('folders');
+    store.put({ id, name, addedAt: Date.now() });
+    tx.oncomplete = resolve;
+    tx.onerror = reject;
+  });
+}
+
+async function getSavedFolders() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('folders', 'readonly');
+    const store = tx.objectStore('folders');
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = reject;
+  });
+}
+
+async function removeSavedFolder(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('folders', 'readwrite');
+    const store = tx.objectStore('folders');
+    store.delete(id);
+    tx.oncomplete = resolve;
+    tx.onerror = reject;
+  });
+}
+
+// ========== 全局状态 ==========
+const state = {
+  folders: [],       // { id, name, handle, children: [], expanded: true }
+  openTabs: [],      // { id, name, handle, icon, content }
+  activeTabId: null,
+  closedTabs: [],
+  allFiles: [],      // 扁平文件列表，快速搜索用
+  expandedNodes: new Set(), // 树中展开的子文件夹 handle
+};
+
+// ========== DOM 引用 ==========
+const $ = (s) => document.querySelector(s);
+const dom = {
+  searchInput: $('#search-input'),
+  folderList: $('#folder-list'),
+  addFolderBtn: $('#add-folder-btn'),
+  newFileBtn: $('#new-file-btn'),
+  refreshBtn: $('#refresh-btn'),
+  tabBar: $('#tab-bar'),
+  contentArea: $('#content-area'),
+  welcomePage: $('#welcome-page'),
+  statusLeft: $('#status-left'),
+  statusRight: $('#status-right'),
+  quickOverlay: $('#quick-overlay'),
+  quickInput: $('#quick-input'),
+  quickResults: $('#quick-results'),
+  contextMenu: $('#context-menu'),
+  modalOverlay: $('#modal-overlay'),
+  modalTitle: $('#modal-title'),
+  modalInput: $('#modal-input'),
+  modalCancel: $('#modal-cancel'),
+  modalConfirm: $('#modal-confirm'),
+  modalTypeField: $('#modal-type-field'),
+  modalTypeSelect: $('#modal-type-select'),
+  modalLocationField: $('#modal-location-field'),
+  modalLocationText: $('#modal-location-text'),
+  modalLocationBtn: $('#modal-location-btn'),
+};
+
+// ========== 工具函数 ==========
+function getFileIcon(name) {
+  const ext = name.split('.').pop()?.toLowerCase();
+  const map = {
+    md: '📝', html: '🌐', htm: '🌐', pdf: '📕',
+    png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', webp: '🖼️', svg: '🖼️',
+    txt: '📄', js: '📜', ts: '📘', jsx: '📘', tsx: '📘',
+    css: '🎨', json: '📋', yaml: '📋', yml: '📋',
+    py: '🐍', rs: '🦀', go: '🔵',
+    pptx: '📊', ppt: '📊', docx: '📝', doc: '📝', xlsx: '📈', xls: '📈',
+    zip: '📦', rar: '📦', tar: '📦', gz: '📦', '7z': '📦',
+    mp3: '🎵', mp4: '🎬', mov: '🎬',
+  };
+  return map[ext] || '📄';
+}
+
+function formatSize(bytes) {
+  if (!bytes || bytes === 0) return '';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function formatDate(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.getFullYear() + '/' +
+    String(d.getMonth() + 1).padStart(2, '0') + '/' +
+    String(d.getDate()).padStart(2, '0') + ' ' +
+    String(d.getHours()).padStart(2, '0') + ':' +
+    String(d.getMinutes()).padStart(2, '0');
+}
+
+function simpleMD(text) {
+  let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code>${code.trim()}</code></pre>`);
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">');
+  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  html = html.replace(/^---$/gm, '<hr>');
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>' + html + '</p>';
+  html = html.replace(/<p>\s*<\/p>/g, '');
+  html = html.replace(/<p>(<h[1-6])/g, '$1');
+  html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<ul)/g, '$1');
+  html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<pre)/g, '$1');
+  html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+  html = html.replace(/<p>(<blockquote)/g, '$1');
+  html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+  return html;
+}
+
+// ========== 文件夹操作 ==========
+async function addFolder() {
+  try {
+    const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+
+    if (state.folders.find(f => f.handle.name === handle.name)) {
+      alert('「' + handle.name + '」已经添加过了');
+      return;
+    }
+
+    const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    const folder = { id, name: handle.name, handle, children: [], expanded: true };
+    state.folders.push(folder);
+    await loadFolderChildren(folder);
+    await saveFolderHandle(id, handle.name);
+    refreshAllFiles();
+    renderAll();
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error('添加文件夹失败:', err);
+  }
+}
+
+// 拖拽添加多个文件夹
+async function handleDrop(e) {
+  const items = e.dataTransfer.items;
+  if (!items) return;
+
+  let added = 0;
+  for (const item of items) {
+    if (item.kind !== 'file') continue;
+
+    // 获取 FileSystemHandle（现代 API）
+    let handle = null;
+    try {
+      handle = await item.getAsFileSystemHandle();
+    } catch (_) {
+      // 降级：旧 API
+      const entry = item.webkitGetAsEntry();
+      if (entry && entry.isDirectory) {
+        // 旧 API 返回的 FileSystemDirectoryEntry 无法直接转为 Handle
+        // 跳过，提示用户使用添加按钮
+        continue;
+      }
+      continue;
+    }
+
+    if (!handle || handle.kind !== 'directory') continue;
+
+    if (state.folders.find(f => f.handle.name === handle.name)) continue;
+
+    const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    const folder = { id, name: handle.name, handle, children: [], expanded: true };
+    state.folders.push(folder);
+    await loadFolderChildren(folder);
+    await saveFolderHandle(id, handle.name);
+    added++;
+  }
+
+  if (added > 0) {
+    refreshAllFiles();
+    renderAll();
+  }
+}
+
+async function loadFolderChildren(folder, maxDepth = 3) {
+  const load = async (handle, arr, depth) => {
+    if (depth >= maxDepth) return;
+    const entries = [];
+    try {
+      for await (const [name, entry] of handle.entries()) {
+        if (name.startsWith('.') || name.startsWith('~')) continue;
+        entries.push({ name, entry });
+      }
+    } catch (e) { return; }
+
+    entries.sort((a, b) => {
+      const aDir = a.entry.kind === 'directory';
+      const bDir = b.entry.kind === 'directory';
+      if (aDir !== bDir) return aDir ? -1 : 1;
+      return a.name.localeCompare(b.name, 'zh-CN');
+    });
+
+    for (const { name, entry } of entries) {
+      const node = {
+        name,
+        handle: entry,
+        kind: entry.kind,
+        depth,
+        children: entry.kind === 'directory' ? [] : null,
+      };
+      arr.push(node);
+      if (entry.kind === 'directory' && depth < 2) {
+        await load(entry, node.children, depth + 1);
+      }
+    }
+  };
+
+  folder.children = [];
+  await load(folder.handle, folder.children, 0);
+}
+
+async function refreshFolder(folder) {
+  folder.children = [];
+  state.expandedNodes.clear();
+  await loadFolderChildren(folder);
+  refreshAllFiles();
+  renderAll();
+}
+
+async function removeFolder(folderId) {
+  if (!confirm('确定要移除此文件夹吗？（不会删除实际文件）')) return;
+  state.folders = state.folders.filter(f => f.id !== folderId);
+  await removeSavedFolder(folderId);
+  refreshAllFiles();
+  renderAll();
+}
+
+// ========== 文件操作（创建/重命名/删除）==========
+let modalResolve = null;
+let modalMode = 'simple'; // 'simple' | 'create-file'
+
+// 文件类型模板
+const FILE_TYPES = [
+  { label: 'Markdown (.md)', ext: 'md', template: '# 标题\n\n开始写内容...\n' },
+  { label: 'HTML (.html)', ext: 'html', template: '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n  <meta charset="UTF-8">\n  <title>文档</title>\n</head>\n<body>\n  \n</body>\n</html>\n' },
+];
+
+function populateTypeSelect() {
+  dom.modalTypeSelect.innerHTML = '';
+  FILE_TYPES.forEach((ft, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = ft.label;
+    dom.modalTypeSelect.appendChild(opt);
+  });
+  dom.modalTypeSelect.value = '0';
+}
+
+function getSelectedFileType() {
+  const idx = parseInt(dom.modalTypeSelect.value);
+  return FILE_TYPES[idx] || FILE_TYPES[0];
+}
+
+function showModal(title, placeholder, defaultVal = '') {
+  modalMode = 'simple';
+  dom.modalTitle.textContent = title;
+  dom.modalInput.placeholder = placeholder;
+  dom.modalInput.value = defaultVal;
+  dom.modalTypeField.style.display = 'none';
+  dom.modalLocationField.style.display = 'none';
+  dom.modalOverlay.classList.add('open');
+  dom.modalInput.focus();
+  dom.modalInput.select();
+  return new Promise((resolve) => {
+    modalResolve = resolve;
+  });
+}
+
+function closeModal(result) {
+  dom.modalOverlay.classList.remove('open');
+  dom.modalInput.value = '';
+  if (modalResolve) {
+    modalResolve(result);
+    modalResolve = null;
+  }
+}
+
+dom.modalCancel.addEventListener('click', () => closeModal(null));
+dom.modalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal(null);
+  if (e.key === 'Enter') dom.modalConfirm.click();
+});
+dom.modalOverlay.addEventListener('click', (e) => {
+  if (e.target === dom.modalOverlay) closeModal(null);
+});
+
+// 创建文件弹窗（带类型和位置选择）
+let createFileResolve = null;
+let createFileLocation = null; // { handle, folder: null | state folder ref }
+
+function showCreateFileModal(targetFolder) {
+  modalMode = 'create-file';
+  dom.modalTitle.textContent = '新建文件';
+  dom.modalInput.placeholder = '输入文件名（不含扩展名）';
+  dom.modalInput.value = '';
+  dom.modalTypeField.style.display = '';
+  dom.modalLocationField.style.display = '';
+
+  populateTypeSelect();
+  dom.modalTypeSelect.value = '0';
+
+  // 保存位置
+  if (targetFolder) {
+    createFileLocation = { handle: targetFolder.handle, folder: targetFolder };
+    dom.modalLocationText.textContent = '📁 ' + targetFolder.name;
+    dom.modalLocationBtn.style.display = 'none';
+  } else if (state.folders.length > 0) {
+    const first = state.folders[0];
+    createFileLocation = { handle: first.handle, folder: first };
+    dom.modalLocationText.textContent = '📁 ' + first.name;
+    dom.modalLocationBtn.textContent = '更换';
+    dom.modalLocationBtn.style.display = '';
+  } else {
+    createFileLocation = null;
+    dom.modalLocationText.textContent = '未选择';
+    dom.modalLocationBtn.textContent = '选择文件夹';
+    dom.modalLocationBtn.style.display = '';
+  }
+
+  dom.modalOverlay.classList.add('open');
+  dom.modalInput.focus();
+  dom.modalInput.select();
+
+  return new Promise((resolve) => {
+    createFileResolve = resolve;
+  });
+}
+
+// 选择保存位置
+dom.modalLocationBtn.addEventListener('click', async () => {
+  try {
+    const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    // 检查是否是已添加的文件夹
+    const existing = state.folders.find(f => f.handle.name === handle.name);
+    if (existing) {
+      createFileLocation = { handle: existing.handle, folder: existing };
+    } else {
+      createFileLocation = { handle, folder: null };
+    }
+    dom.modalLocationText.textContent = '📁 ' + handle.name;
+    dom.modalLocationBtn.textContent = '更换';
+  } catch (err) {
+    if (err.name !== 'AbortError') console.error(err);
+  }
+});
+
+// 确认按钮（创建文件模式）
+dom.modalConfirm.addEventListener('click', async () => {
+  if (modalMode === 'create-file') {
+    const name = dom.modalInput.value.trim();
+    if (!name) return;
+
+    if (!createFileLocation) {
+      alert('请先选择保存位置');
+      return;
+    }
+
+    const ft = getSelectedFileType();
+    let fileName = name;
+    // 确保扩展名正确
+    if (ft.ext && !fileName.endsWith('.' + ft.ext)) {
+      const dotIdx = fileName.lastIndexOf('.');
+      if (dotIdx > 0) fileName = fileName.substring(0, dotIdx);
+      fileName += '.' + ft.ext;
+    }
+
+    dom.modalOverlay.classList.remove('open');
+    dom.modalInput.value = '';
+    if (createFileResolve) {
+      createFileResolve({ fileName, template: ft.template, location: createFileLocation });
+      createFileResolve = null;
+    }
+    modalMode = 'simple';
+    return;
+  }
+
+  // 简单模式
+  closeModal(dom.modalInput.value.trim());
+});
+
+async function createFile(parentHandle, parentFolder) {
+  const result = await showCreateFileModal(parentFolder);
+  if (!result) return;
+
+  try {
+    const fileHandle = await result.location.handle.getFileHandle(result.fileName, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(result.template);
+    await writable.close();
+
+    // 如果是新文件夹（不在 state 中），自动添加到侧边栏
+    if (!result.location.folder) {
+      const handle = result.location.handle;
+      const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+      const folder = { id, name: handle.name, handle, children: [], expanded: true };
+      state.folders.push(folder);
+      await loadFolderChildren(folder);
+      await saveFolderHandle(id, handle.name);
+    }
+
+    // 刷新
+    if (result.location.folder) {
+      await refreshFolder(result.location.folder);
+    } else {
+      refreshAllFiles();
+      renderAll();
+    }
+  } catch (err) {
+    alert('创建文件失败：' + err.message);
+  }
+}
+
+async function createFolder(parentHandle, parentFolder) {
+  const name = await showModal('新建文件夹', '输入文件夹名称');
+  if (!name) return;
+  try {
+    await parentHandle.getDirectoryHandle(name, { create: true });
+    await refreshFolder(parentFolder);
+  } catch (err) {
+    alert('创建文件夹失败：' + err.message);
+  }
+}
+
+async function renameEntry(handle, parentFolder, currentName) {
+  const newName = await showModal('重命名', '输入新名称', currentName);
+  if (!newName || newName === currentName) return;
+  try {
+    // File System Access API 不支持直接重命名，通过复制+删除实现
+    // handle.move() 在某些浏览器中可用
+    if (typeof handle.move === 'function') {
+      await handle.move(newName);
+    } else {
+      alert('当前浏览器不支持重命名操作，请在访达中手动重命名');
+      return;
+    }
+    await refreshFolder(parentFolder);
+    // 更新已打开标签
+    for (const tab of state.openTabs) {
+      if (tab.handle === handle) tab.name = newName;
+    }
+    renderAll();
+  } catch (err) {
+    alert('重命名失败：' + err.message);
+  }
+}
+
+async function deleteEntry(handle, parentFolder, name) {
+  if (!confirm(`确定要删除「${name}」吗？\n\n此操作不可恢复。`)) return;
+  try {
+    if (typeof handle.remove === 'function') {
+      await handle.remove();
+    } else {
+      alert('当前浏览器不支持删除操作，请在访达中手动删除');
+      return;
+    }
+    // 关闭对应标签
+    state.openTabs = state.openTabs.filter(t => t.handle !== handle);
+    if (state.activeTabId && !state.openTabs.find(t => t.id === state.activeTabId)) {
+      state.activeTabId = state.openTabs.length > 0 ? state.openTabs[state.openTabs.length - 1].id : null;
+    }
+    await refreshFolder(parentFolder);
+    renderAll();
+  } catch (err) {
+    alert('删除失败：' + err.message);
+  }
+}
+
+// ========== 文件监听（HTML 实时预览）==========
+function startHtmlWatcher(tab, iframe) {
+  stopHtmlWatcher(tab);
+  // 记录当前修改时间
+  tab._lastModified = tab._lastModified || 0;
+
+  tab._watchTimer = setInterval(async () => {
+    try {
+      const file = await tab.handle.getFile();
+      if (file.lastModified !== tab._lastModified) {
+        tab._lastModified = file.lastModified;
+        const text = await file.text();
+        tab.content.text = text;
+        iframe.srcdoc = text;
+      }
+    } catch (_) {
+      // 文件不可访问，停止监听
+      stopHtmlWatcher(tab);
+    }
+  }, 1500);
+}
+
+function stopHtmlWatcher(tab) {
+  if (tab._watchTimer) {
+    clearInterval(tab._watchTimer);
+    tab._watchTimer = null;
+  }
+}
+
+// ========== 保存文件 ==========
+async function saveFile(tab) {
+  if (!tab || !tab.handle || tab.handle.kind !== 'file') return;
+  try {
+    const writable = await tab.handle.createWritable();
+    await writable.write(tab.content.text);
+    await writable.close();
+    tab.modified = false;
+    // 更新内容区中的保存状态显示
+    const saveBtn = document.querySelector('.md-save-btn');
+    if (saveBtn) {
+      saveBtn.textContent = '✓ 已保存';
+      saveBtn.classList.add('saved');
+      setTimeout(() => {
+        saveBtn.textContent = '保存';
+        saveBtn.classList.remove('saved');
+      }, 1500);
+    }
+  } catch (err) {
+    alert('保存失败：' + err.message);
+  }
+}
+
+// ========== 右键菜单 ==========
+let contextTarget = null;
+
+function showContextMenu(x, y, node, parentFolder) {
+  contextTarget = { node, parentFolder };
+  dom.contextMenu.innerHTML = '';
+
+  const isDir = node.kind === 'directory';
+  const items = [];
+
+  if (isDir) {
+    items.push({ label: '📄 新建文件', cls: '', action: () => createFile(node.handle, parentFolder) });
+    items.push({ label: '📁 新建文件夹', cls: '', action: () => createFolder(node.handle, parentFolder) });
+    items.push({ sep: true });
+  }
+  items.push({ label: '✏️ 重命名', cls: '', action: () => renameEntry(node.handle, parentFolder, node.name) });
+  items.push({ sep: true });
+  items.push({ label: '🗑️ 删除', cls: 'danger', action: () => deleteEntry(node.handle, parentFolder, node.name) });
+
+  for (const item of items) {
+    if (item.sep) {
+      const sep = document.createElement('div');
+      sep.className = 'context-menu-sep';
+      dom.contextMenu.appendChild(sep);
+    } else {
+      const el = document.createElement('div');
+      el.className = 'context-menu-item' + (item.cls ? ' ' + item.cls : '');
+      el.textContent = item.label;
+      el.addEventListener('click', () => {
+        item.action();
+        closeContextMenu();
+      });
+      dom.contextMenu.appendChild(el);
+    }
+  }
+
+  // 调整位置避免超出屏幕
+  const w = 190;
+  const h = items.length * 32 + 8;
+  if (x + w > window.innerWidth) x = window.innerWidth - w - 8;
+  if (y + h > window.innerHeight) y = window.innerHeight - h - 8;
+
+  dom.contextMenu.style.left = x + 'px';
+  dom.contextMenu.style.top = y + 'px';
+  dom.contextMenu.classList.add('open');
+}
+
+function closeContextMenu() {
+  dom.contextMenu.classList.remove('open');
+  contextTarget = null;
+}
+
+function refreshAllFiles() {
+  state.allFiles = [];
+  for (const folder of state.folders) {
+    collectFiles(folder.children, folder.name, folder.handle, state.allFiles);
+  }
+}
+
+function collectFiles(nodes, folderName, folderHandle, result) {
+  for (const node of nodes) {
+    result.push({
+      name: node.name,
+      handle: node.handle,
+      kind: node.kind,
+      folderName,
+      folderHandle,
+    });
+    if (node.children) {
+      collectFiles(node.children, folderName, folderHandle, result);
+    }
+  }
+}
+
+// ========== 渲染 ==========
+function renderAll() {
+  renderFolderList();
+  renderTabs();
+  const active = state.openTabs.find(t => t.id === state.activeTabId);
+  if (active) renderContent(active);
+}
+
+function renderFolderList() {
+  dom.folderList.innerHTML = '';
+
+  if (state.folders.length === 0) {
+    dom.folderList.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size:32px;margin-bottom:8px">📂</div>
+        <div>还没有添加文件夹</div>
+        <div style="margin-top:4px">点击下方按钮开始</div>
+      </div>
+    `;
+    return;
+  }
+
+  const filter = dom.searchInput.value.toLowerCase();
+
+  for (const folder of state.folders) {
+    const section = document.createElement('div');
+    section.className = 'folder-section';
+
+    // 文件夹头部
+    const header = document.createElement('div');
+    header.className = 'folder-header';
+
+    const chevron = document.createElement('span');
+    chevron.className = 'folder-chevron' + (folder.expanded ? ' expanded' : '');
+    chevron.textContent = '▶';
+
+    const icon = document.createElement('span');
+    icon.className = 'folder-icon';
+    icon.textContent = folder.expanded ? '📂' : '📁';
+
+    const name = document.createElement('span');
+    name.className = 'folder-name';
+    name.textContent = folder.name;
+
+    const actions = document.createElement('span');
+    actions.className = 'folder-actions';
+    actions.innerHTML = `
+      <button class="folder-btn" title="新建文件" data-action="newfile">📄</button>
+      <button class="folder-btn" title="新建文件夹" data-action="newfolder">📁</button>
+      <button class="folder-btn" title="刷新" data-action="refresh">🔄</button>
+      <button class="folder-btn danger" title="移除文件夹" data-action="remove">✕</button>
+    `;
+
+    header.appendChild(chevron);
+    header.appendChild(icon);
+    header.appendChild(name);
+    header.appendChild(actions);
+    section.appendChild(header);
+
+    // 子节点
+    const childrenWrap = document.createElement('div');
+    childrenWrap.className = 'folder-children' + (folder.expanded ? ' open' : '');
+
+    if (folder.children.length > 0) {
+      renderTreeNodes(folder.children, childrenWrap, filter);
+    } else {
+      childrenWrap.innerHTML = '<div class="empty-state" style="padding:8px">空文件夹</div>';
+    }
+
+    section.appendChild(childrenWrap);
+
+    // 事件
+    header.addEventListener('click', (e) => {
+      if (e.target.closest('[data-action="newfile"]')) {
+        e.stopPropagation();
+        createFile(folder.handle, folder);
+        return;
+      }
+      if (e.target.closest('[data-action="newfolder"]')) {
+        e.stopPropagation();
+        createFolder(folder.handle, folder);
+        return;
+      }
+      if (e.target.closest('[data-action="refresh"]')) {
+        e.stopPropagation();
+        refreshFolder(folder);
+        return;
+      }
+      if (e.target.closest('[data-action="remove"]')) {
+        e.stopPropagation();
+        removeFolder(folder.id);
+        return;
+      }
+      folder.expanded = !folder.expanded;
+      renderFolderList();
+    });
+
+    // 右键菜单（在文件夹根目录创建）
+    header.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const fakeNode = { name: folder.name, handle: folder.handle, kind: 'directory' };
+      showContextMenu(e.clientX, e.clientY, fakeNode, folder);
+    });
+
+    dom.folderList.appendChild(section);
+  }
+}
+
+async function loadNodeChildren(node) {
+  // 懒加载某个节点的直接子节点
+  if (node.children && node.children.length > 0) return; // 已加载
+  if (node.kind !== 'directory') return;
+  const entries = [];
+  try {
+    for await (const [name, entry] of node.handle.entries()) {
+      if (name.startsWith('.') || name.startsWith('~')) continue;
+      entries.push({ name, entry });
+    }
+  } catch (e) { return; }
+
+  entries.sort((a, b) => {
+    const aDir = a.entry.kind === 'directory';
+    const bDir = b.entry.kind === 'directory';
+    if (aDir !== bDir) return aDir ? -1 : 1;
+    return a.name.localeCompare(b.name, 'zh-CN');
+  });
+
+  for (const { name, entry } of entries) {
+    node.children.push({
+      name,
+      handle: entry,
+      kind: entry.kind,
+      depth: node.depth + 1,
+      children: entry.kind === 'directory' ? [] : null,
+    });
+  }
+}
+
+function renderTreeNodes(nodes, container, filter) {
+  for (const node of nodes) {
+    // 过滤
+    if (filter && !node.name.toLowerCase().includes(filter)) {
+      if (!node.children || node.children.length === 0) continue;
+      if (!hasFilterMatch(node, filter)) continue;
+    }
+
+    const isDir = node.kind === 'directory';
+    const isExpanded = isDir && state.expandedNodes.has(node.handle);
+    const isActive = state.openTabs.some(t => t.handle === node.handle && t.id === state.activeTabId);
+
+    // 包装容器（目录的子节点会放到这里面）
+    const wrapper = document.createElement('div');
+    wrapper.className = 'tree-wrapper';
+
+    const item = document.createElement('div');
+    item.className = 'tree-item depth-' + node.depth;
+    if (isActive) item.classList.add('active');
+    item.title = node.name;
+
+    // 展开箭头（仅目录）
+    const chevron = document.createElement('span');
+    chevron.className = 'item-icon';
+    if (isDir) {
+      chevron.textContent = '▶';
+      chevron.style.fontSize = '9px';
+      chevron.style.width = '15px';
+      chevron.style.textAlign = 'center';
+      chevron.style.flexShrink = '0';
+      chevron.style.color = 'var(--text-tertiary)';
+      chevron.style.transition = 'transform 0.15s';
+      if (isExpanded) chevron.style.transform = 'rotate(90deg)';
+    } else {
+      chevron.textContent = '';
+      chevron.style.width = '15px';
+      chevron.style.flexShrink = '0';
+    }
+
+    // 图标
+    const icon = document.createElement('span');
+    icon.className = 'item-icon';
+    icon.style.width = '15px';
+    icon.style.textAlign = 'center';
+    icon.style.flexShrink = '0';
+    icon.style.fontSize = '13px';
+    icon.textContent = isDir ? (isExpanded ? '📂' : '📁') : getFileIcon(node.name);
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'item-name';
+    nameEl.textContent = node.name;
+
+    item.appendChild(chevron);
+    item.appendChild(icon);
+    item.appendChild(nameEl);
+
+    // 点击
+    item.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (isDir) {
+        // 切换展开/折叠
+        if (state.expandedNodes.has(node.handle)) {
+          state.expandedNodes.delete(node.handle);
+        } else {
+          // 懒加载子节点
+          if (!node.children || node.children.length === 0) {
+            await loadNodeChildren(node);
+          }
+          state.expandedNodes.add(node.handle);
+        }
+        refreshAllFiles();
+        renderAll();
+      } else {
+        openFileInTab(node);
+      }
+    });
+
+    // 右键
+    item.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const folder = state.folders.find(f =>
+        f.handle === node.handle || hasChildHandle(f.children, node.handle)
+      );
+      if (folder) {
+        showContextMenu(e.clientX, e.clientY, node, folder);
+      }
+    });
+
+    wrapper.appendChild(item);
+    container.appendChild(wrapper);
+
+    // 递归渲染展开的子节点
+    if (isDir && isExpanded && node.children && node.children.length > 0) {
+      const childWrap = document.createElement('div');
+      childWrap.className = 'folder-children open';
+      renderTreeNodes(node.children, childWrap, filter);
+      container.appendChild(childWrap);
+    }
+  }
+}
+
+function hasFilterMatch(node, filter) {
+  if (node.name.toLowerCase().includes(filter)) return true;
+  if (node.children) return node.children.some(c => hasFilterMatch(c, filter));
+  return false;
+}
+
+function hasChildHandle(children, targetHandle) {
+  for (const node of children) {
+    if (node.handle === targetHandle) return true;
+    if (node.children && hasChildHandle(node.children, targetHandle)) return true;
+  }
+  return false;
+}
+
+// ========== 标签管理 ==========
+async function openFileInTab(node) {
+  const existing = state.openTabs.find(t => t.handle === node.handle);
+  if (existing) {
+    state.activeTabId = existing.id;
+    renderTabs();
+    renderContent(existing);
+    renderFolderList();
+    return;
+  }
+
+  const tab = {
+    id: Date.now().toString(),
+    name: node.name,
+    handle: node.handle,
+    icon: getFileIcon(node.name),
+    content: null,
+    editMode: false,
+    modified: false,
+  };
+  state.openTabs.push(tab);
+  state.activeTabId = tab.id;
+
+  await loadFileContent(tab);
+  renderTabs();
+  renderContent(tab);
+  renderFolderList();
+
+  setTimeout(() => {
+    const el = document.querySelector(`.tab[data-id="${tab.id}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+async function loadFileContent(tab) {
+  try {
+    const file = await tab.handle.getFile();
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    if (['png','jpg','jpeg','gif','webp','svg','bmp','ico'].includes(ext)) {
+      tab.content = { type: 'image', url: URL.createObjectURL(file), size: file.size };
+    } else if (ext === 'pdf') {
+      tab.content = { type: 'pdf', url: URL.createObjectURL(file), size: file.size };
+    } else if (['html','htm'].includes(ext)) {
+      tab.content = { type: 'html', text: await file.text(), size: file.size };
+    } else if (['docx','doc','pptx','ppt','xlsx','xls'].includes(ext)) {
+      tab.content = { type: 'office', name: file.name, size: file.size, lastModified: file.lastModified };
+    } else if (ext === 'md') {
+      tab.content = { type: 'markdown', text: await file.text(), size: file.size };
+    } else {
+      const text = await file.text();
+      tab.content = { type: 'text', text, size: file.size, ext };
+    }
+  } catch (err) {
+    tab.content = { type: 'error', message: '无法读取文件：' + err.message };
+  }
+}
+
+function closeTab(tabId, e) {
+  if (e) e.stopPropagation();
+  const idx = state.openTabs.findIndex(t => t.id === tabId);
+  if (idx === -1) return;
+
+  const tab = state.openTabs[idx];
+  stopHtmlWatcher(tab);
+  if (tab.modified) {
+    if (confirm('「' + tab.name + '」有未保存的修改，是否保存后关闭？')) {
+      saveFile(tab);
+    }
+  }
+
+  const [closed] = state.openTabs.splice(idx, 1);
+  state.closedTabs.unshift(closed);
+  if (state.closedTabs.length > 30) state.closedTabs.pop();
+
+  if (state.activeTabId === tabId) {
+    if (state.openTabs.length > 0) {
+      state.activeTabId = state.openTabs[Math.min(idx, state.openTabs.length - 1)].id;
+    } else {
+      state.activeTabId = null;
+    }
+  }
+
+  renderTabs();
+  renderFolderList();
+
+  if (state.openTabs.length === 0) {
+    dom.welcomePage.style.display = '';
+    dom.contentArea.querySelectorAll('.file-panel').forEach(p => p.remove());
+  } else {
+    const active = state.openTabs.find(t => t.id === state.activeTabId);
+    if (active) renderContent(active);
+  }
+  dom.statusRight.textContent = state.openTabs.length ? state.openTabs.length + ' 个标签' : '';
+}
+
+function activateTab(tabId) {
+  state.activeTabId = tabId;
+  const tab = state.openTabs.find(t => t.id === tabId);
+  renderTabs();
+  renderFolderList();
+  if (tab) renderContent(tab);
+}
+
+function renderTabs() {
+  dom.tabBar.innerHTML = '';
+  for (const tab of state.openTabs) {
+    const el = document.createElement('div');
+    el.className = 'tab' + (tab.id === state.activeTabId ? ' active' : '');
+    el.dataset.id = tab.id;
+    el.title = tab.name;
+
+    const icon = document.createElement('span');
+    icon.className = 'tab-icon';
+    icon.textContent = tab.icon;
+
+    const name = document.createElement('span');
+    name.className = 'tab-name';
+    name.textContent = tab.name;
+
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'tab-close';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', (e) => closeTab(tab.id, e));
+
+    el.appendChild(icon);
+    el.appendChild(name);
+    el.appendChild(closeBtn);
+
+    el.addEventListener('click', () => activateTab(tab.id));
+    el.addEventListener('mousedown', (e) => {
+      if (e.button === 1) { closeTab(tab.id, e); e.preventDefault(); }
+    });
+
+    dom.tabBar.appendChild(el);
+  }
+  dom.statusRight.textContent = state.openTabs.length ? state.openTabs.length + ' 个标签' : '';
+}
+
+function renderContent(tab) {
+  dom.welcomePage.style.display = 'none';
+  dom.contentArea.querySelectorAll('.file-panel').forEach(p => p.remove());
+
+  if (!tab || !tab.content) return;
+
+  const panel = document.createElement('div');
+  panel.className = 'file-panel visible';
+  panel.dataset.tabId = tab.id;
+
+  const { type } = tab.content;
+
+  // 可编辑的文本类型：text, markdown, html
+  const textTypes = ['text', 'markdown', 'html'];
+  if (textTypes.includes(type)) {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'md-toolbar';
+
+    const viewLabel = type === 'markdown' ? '预览' : (type === 'html' ? '预览' : '查看');
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'md-mode-btn' + (!tab.editMode ? ' active' : '');
+    viewBtn.textContent = viewLabel;
+    viewBtn.addEventListener('click', () => {
+      tab.editMode = false;
+      renderContent(tab);
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'md-mode-btn' + (tab.editMode ? ' active' : '');
+    editBtn.textContent = '编辑';
+    editBtn.addEventListener('click', () => {
+      tab.editMode = true;
+      renderContent(tab);
+      setTimeout(() => {
+        const ta = document.querySelector('.md-editor');
+        if (ta) { ta.focus(); ta.selectionStart = ta.value.length; }
+      }, 50);
+    });
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'md-save-btn';
+    saveBtn.textContent = '保存';
+    saveBtn.addEventListener('click', () => saveFile(tab));
+
+    const modified = document.createElement('span');
+    modified.className = 'md-modified';
+
+    toolbar.appendChild(viewBtn);
+    toolbar.appendChild(editBtn);
+    toolbar.appendChild(saveBtn);
+    toolbar.appendChild(modified);
+    panel.appendChild(toolbar);
+
+    // 切换模式时停止文件监听
+    stopHtmlWatcher(tab);
+
+    if (tab.editMode) {
+      // 编辑模式：textarea
+      const textarea = document.createElement('textarea');
+      textarea.className = 'md-editor';
+      textarea.value = tab.content.text;
+      textarea.addEventListener('input', () => {
+        tab.content.text = textarea.value;
+        tab.modified = true;
+        modified.textContent = '未保存';
+      });
+      textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const s = textarea.selectionStart, end = textarea.selectionEnd;
+          textarea.value = textarea.value.substring(0, s) + '  ' + textarea.value.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = s + 2;
+          tab.content.text = textarea.value;
+          tab.modified = true;
+          modified.textContent = '未保存';
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+          e.preventDefault();
+          saveFile(tab);
+          modified.textContent = '';
+        }
+      });
+      panel.appendChild(textarea);
+      if (tab.modified) modified.textContent = '未保存';
+    } else {
+      // 查看/预览模式
+      saveBtn.style.display = 'none';
+      if (type === 'markdown') {
+        const v = document.createElement('div');
+        v.className = 'md-viewer';
+        v.innerHTML = simpleMD(tab.content.text);
+        panel.appendChild(v);
+      } else if (type === 'html') {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'html-viewer';
+        iframe.sandbox = 'allow-scripts allow-same-origin';
+        iframe.srcdoc = tab.content.text;
+        panel.appendChild(iframe);
+        // 启动文件监听：外部修改后自动刷新预览
+        startHtmlWatcher(tab, iframe);
+      } else {
+        const v = document.createElement('div');
+        v.className = 'text-viewer';
+        v.textContent = tab.content.text;
+        panel.appendChild(v);
+      }
+    }
+  } else if (type === 'image') {
+    const wrap = document.createElement('div');
+    wrap.className = 'image-viewer-wrap';
+    const img = document.createElement('img');
+    img.src = tab.content.url;
+    img.alt = tab.name;
+    wrap.appendChild(img);
+    panel.appendChild(wrap);
+  } else if (type === 'pdf') {
+    const embed = document.createElement('embed');
+    embed.className = 'pdf-viewer';
+    embed.src = tab.content.url;
+    embed.type = 'application/pdf';
+    panel.appendChild(embed);
+  } else if (type === 'office') {
+    const div = document.createElement('div');
+    div.className = 'office-info';
+    div.innerHTML = `
+      <div class="office-icon">${getFileIcon(tab.content.name)}</div>
+      <div class="office-name">${tab.content.name}</div>
+      <div class="office-meta">${formatSize(tab.content.size)} · ${formatDate(tab.content.lastModified)}</div>
+      <div class="office-hint">Office 文档需要在本地应用中打开</div>
+    `;
+    panel.appendChild(div);
+  } else if (type === 'error') {
+    const v = document.createElement('div');
+    v.className = 'text-viewer';
+    v.style.color = '#ff3b30';
+    v.textContent = tab.content.message;
+    panel.appendChild(v);
+  }
+
+  dom.contentArea.appendChild(panel);
+  const sizeInfo = tab.content.size ? ' · ' + formatSize(tab.content.size) : '';
+  dom.statusLeft.textContent = tab.name + sizeInfo;
+}
+
+// ========== 快速搜索 ==========
+function openQuickSearch() {
+  dom.quickOverlay.classList.add('open');
+  dom.quickInput.value = '';
+  dom.quickInput.focus();
+  renderQuickResults('');
+}
+
+function closeQuickSearch() {
+  dom.quickOverlay.classList.remove('open');
+}
+
+function renderQuickResults(query) {
+  dom.quickResults.innerHTML = '';
+  if (!state.allFiles.length) {
+    dom.quickResults.innerHTML = '<div style="padding:14px 20px;color:var(--text-tertiary);font-size:13px;">请先添加文件夹</div>';
+    return;
+  }
+  const q = query.toLowerCase();
+  let results = state.allFiles;
+  if (q) results = results.filter(f => f.name.toLowerCase().includes(q));
+  results = results.slice(0, 30);
+
+  if (!results.length) {
+    dom.quickResults.innerHTML = '<div style="padding:14px 20px;color:var(--text-tertiary);font-size:13px;">无匹配文件</div>';
+    return;
+  }
+
+  results.forEach((f, i) => {
+    const el = document.createElement('div');
+    el.className = 'quick-result' + (i === 0 ? ' selected' : '');
+    el.dataset.index = i;
+
+    const icon = document.createElement('span');
+    icon.className = 'qr-icon';
+    icon.textContent = f.kind === 'directory' ? '📁' : getFileIcon(f.name);
+
+    const name = document.createElement('span');
+    name.className = 'qr-name';
+    name.textContent = f.name;
+
+    const path = document.createElement('span');
+    path.className = 'qr-path';
+    path.textContent = f.folderName;
+
+    el.appendChild(icon);
+    el.appendChild(name);
+    el.appendChild(path);
+
+    el.addEventListener('click', () => {
+      closeQuickSearch();
+      if (f.kind === 'file') openFileInTab(f);
+    });
+
+    dom.quickResults.appendChild(el);
+  });
+}
+
+dom.quickInput.addEventListener('input', () => renderQuickResults(dom.quickInput.value));
+dom.quickInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeQuickSearch(); return; }
+  const results = dom.quickResults.querySelectorAll('.quick-result');
+  if (!results.length) return;
+  let idx = -1;
+  results.forEach((r, i) => { if (r.classList.contains('selected')) idx = i; });
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = Math.min(idx + 1, results.length - 1);
+    if (idx >= 0) results[idx].classList.remove('selected');
+    results[next].classList.add('selected');
+    results[next].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = Math.max(idx - 1, 0);
+    if (idx >= 0) results[idx].classList.remove('selected');
+    results[prev].classList.add('selected');
+    results[prev].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const i = Math.max(0, idx);
+    results[i]?.click();
+  }
+});
+
+dom.quickOverlay.addEventListener('click', (e) => {
+  if (e.target === dom.quickOverlay) closeQuickSearch();
+});
+
+// ========== 键盘快捷键 ==========
+document.addEventListener('keydown', (e) => {
+  const mod = e.metaKey || e.ctrlKey;
+
+  if (mod && e.key === 'p') { e.preventDefault(); openQuickSearch(); return; }
+  if (mod && e.key === 's') {
+    e.preventDefault();
+    const tab = state.openTabs.find(t => t.id === state.activeTabId);
+    if (tab && tab.modified) saveFile(tab);
+    return;
+  }
+  if (mod && e.key === 'w') { e.preventDefault(); if (state.activeTabId) closeTab(state.activeTabId); return; }
+  if (mod && e.shiftKey && e.key === 'T') {
+    e.preventDefault();
+    if (state.closedTabs.length > 0) {
+      const tab = state.closedTabs.shift();
+      state.openTabs.push(tab);
+      state.activeTabId = tab.id;
+      renderTabs();
+      renderContent(tab);
+      renderFolderList();
+    }
+    return;
+  }
+  if (e.key === 'Escape') { closeQuickSearch(); closeContextMenu(); }
+});
+
+// 点击其他地方关闭右键菜单
+document.addEventListener('click', (e) => {
+  if (!dom.contextMenu.contains(e.target)) closeContextMenu();
+});
+
+// 搜索框聚焦 → 打开快速搜索
+dom.searchInput.addEventListener('focus', () => {
+  dom.searchInput.blur();
+  openQuickSearch();
+});
+
+// 搜索框输入 → 过滤文件树
+dom.searchInput.addEventListener('input', () => renderFolderList());
+
+// 按钮
+dom.addFolderBtn.addEventListener('click', addFolder);
+dom.newFileBtn.addEventListener('click', () => createFile(null, null));
+dom.refreshBtn.addEventListener('click', async () => {
+  for (const folder of state.folders) {
+    await refreshFolder(folder);
+  }
+});
+
+// 拖拽多个文件夹到侧边栏
+let dragCounter = 0;
+dom.sidebar.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  dragCounter++;
+  dom.sidebar.classList.add('drag-over');
+});
+dom.sidebar.addEventListener('dragleave', () => {
+  dragCounter--;
+  if (dragCounter <= 0) {
+    dragCounter = 0;
+    dom.sidebar.classList.remove('drag-over');
+  }
+});
+dom.sidebar.addEventListener('dragover', (e) => {
+  e.preventDefault();
+});
+dom.sidebar.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  dragCounter = 0;
+  dom.sidebar.classList.remove('drag-over');
+  await handleDrop(e);
+});
+
+// ========== 启动：尝试恢复已保存的文件夹 ==========
+async function init() {
+  const saved = await getSavedFolders();
+  if (saved.length > 0) {
+    // 提示用户重新选择文件夹以获取权限
+    const names = saved.map(s => s.name).join('、');
+    const restore = confirm(
+      `检测到之前的文件夹：\n${names}\n\n是否重新授权访问这些文件夹？\n（需要在弹出的对话框中选择对应文件夹）`
+    );
+    if (restore) {
+      for (const { id, name } of saved) {
+        try {
+          const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+          if (handle.name === name || confirm(`你选择了「${handle.name}」，是否添加？（原文件夹为「${name}」）`)) {
+            const folder = { id, name: handle.name, handle, children: [], expanded: true };
+            state.folders.push(folder);
+            await loadFolderChildren(folder);
+            // 更新存储的名称
+            await saveFolderHandle(id, handle.name);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') break; // 用户取消
+        }
+      }
+    } else {
+      // 清除存储
+      const db = await openDB();
+      const tx = db.transaction('folders', 'readwrite');
+      tx.objectStore('folders').clear();
+    }
+  }
+
+  if (state.folders.length === 0) {
+    // 检查是否从 拾元文件夹 目录打开，自动建议添加
+    const suggest = confirm('是否立即添加一个文件夹开始管理？');
+    if (suggest) await addFolder();
+  }
+
+  refreshAllFiles();
+  renderAll();
+}
+
+init().catch(console.error);
+</script>
+
+</body>
+</html>
