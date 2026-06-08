@@ -1149,9 +1149,11 @@ async function loadFolderChildren(folder, maxDepth = 3) {
 }
 
 async function refreshFolder(folder) {
+  // 重新加载文件夹，保持顶层展开状态
+  const wasExpanded = folder.expanded;
   folder.children = [];
-  state.expandedNodes.clear();
   await loadFolderChildren(folder);
+  folder.expanded = wasExpanded;
   refreshAllFiles();
   renderAll();
 }
@@ -1340,9 +1342,27 @@ async function doCreateFile(result) {
     await writable.write(result.template);
     await writable.close();
 
-    // 如果位置不在已添加的文件夹中，自动添加
-    const folder = result.location.folder;
-    if (!folder) {
+    const targetHandle = result.location.handle;
+
+    // 尝试在现有树中找到目标文件夹节点，直接插入
+    let inserted = false;
+
+    // 1. 检查顶层文件夹
+    for (const folder of state.folders) {
+      if (folder.handle === targetHandle) {
+        insertChildSorted(folder.children, result.fileName, fileHandle, 'file', 0);
+        inserted = true;
+        break;
+      }
+    }
+
+    // 2. 没找到，在子文件夹中递归搜索
+    if (!inserted) {
+      inserted = insertIntoTreeNode(state.folders, targetHandle, result.fileName, fileHandle);
+    }
+
+    // 3. 都不在已知树中：自动添加为新的顶层文件夹
+    if (!inserted) {
       const handle = result.location.handle;
       const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
       const newFolder = { id, name: handle.name, handle, children: [], expanded: true };
@@ -1351,24 +1371,61 @@ async function doCreateFile(result) {
       await saveFolderHandle(id, handle.name, handle);
     }
 
-    // 刷新相关文件夹
-    if (folder) {
-      await refreshFolder(folder);
-    } else {
-      refreshAllFiles();
-      renderAll();
-    }
+    refreshAllFiles();
+    renderAll();
   } catch (err) {
     alert('创建文件失败：' + err.message);
   }
+}
+
+function insertIntoTreeNode(nodes, targetHandle, fileName, fileHandle) {
+  for (const node of nodes) {
+    if (node.handle === targetHandle) {
+      if (!node.children) node.children = [];
+      insertChildSorted(node.children, fileName, fileHandle, 'file', node.depth + 1);
+      return true;
+    }
+    if (node.children && node.children.length > 0) {
+      if (insertIntoTreeNode(node.children, targetHandle, fileName, fileHandle)) return true;
+    }
+  }
+  return false;
+}
+
+function insertChildSorted(children, name, handle, kind, depth) {
+  const node = {
+    name,
+    handle,
+    kind,
+    depth,
+    children: kind === 'directory' ? [] : null,
+  };
+  children.push(node);
+  // 排序：文件夹在前，按名称
+  children.sort((a, b) => {
+    const aDir = a.kind === 'directory';
+    const bDir = b.kind === 'directory';
+    if (aDir !== bDir) return aDir ? -1 : 1;
+    return a.name.localeCompare(b.name, 'zh-CN');
+  });
 }
 
 async function createFolder(parentHandle, parentFolder) {
   const name = await showModal('新建文件夹', '输入文件夹名称');
   if (!name) return;
   try {
-    await parentHandle.getDirectoryHandle(name, { create: true });
-    await refreshFolder(parentFolder);
+    const dirHandle = await parentHandle.getDirectoryHandle(name, { create: true });
+    // 直接在树中插入新文件夹节点，不刷新
+    if (!insertIntoTreeNode(state.folders, parentHandle, name, dirHandle)) {
+      for (const folder of state.folders) {
+        if (folder.handle === parentHandle) {
+          insertChildSorted(folder.children, name, dirHandle, 'directory', 0);
+          break;
+        }
+      }
+    }
+    refreshAllFiles();
+    renderAll();
   } catch (err) {
     alert('创建文件夹失败：' + err.message);
   }
@@ -1378,23 +1435,31 @@ async function renameEntry(handle, parentFolder, currentName) {
   const newName = await showModal('重命名', '输入新名称', currentName);
   if (!newName || newName === currentName) return;
   try {
-    // File System Access API 不支持直接重命名，通过复制+删除实现
-    // handle.move() 在某些浏览器中可用
     if (typeof handle.move === 'function') {
       await handle.move(newName);
     } else {
       alert('当前浏览器不支持重命名操作，请在访达中手动重命名');
       return;
     }
-    await refreshFolder(parentFolder);
+    // 直接在树中更新名称
+    renameInTree(state.folders, handle, newName);
     // 更新已打开标签
     for (const tab of state.openTabs) {
-      if (tab.handle === handle) tab.name = newName;
+      if (tab.handle === handle) { tab.name = newName; tab.icon = getFileIcon(newName); }
     }
+    refreshAllFiles();
     renderAll();
   } catch (err) {
     alert('重命名失败：' + err.message);
   }
+}
+
+function renameInTree(nodes, targetHandle, newName) {
+  for (const node of nodes) {
+    if (node.handle === targetHandle) { node.name = newName; return true; }
+    if (node.children && renameInTree(node.children, targetHandle, newName)) return true;
+  }
+  return false;
 }
 
 async function deleteEntry(handle, parentFolder, name) {
@@ -1406,16 +1471,26 @@ async function deleteEntry(handle, parentFolder, name) {
       alert('当前浏览器不支持删除操作，请在访达中手动删除');
       return;
     }
+    // 从树中移除
+    deleteFromTree(state.folders, handle);
     // 关闭对应标签
     state.openTabs = state.openTabs.filter(t => t.handle !== handle);
     if (state.activeTabId && !state.openTabs.find(t => t.id === state.activeTabId)) {
       state.activeTabId = state.openTabs.length > 0 ? state.openTabs[state.openTabs.length - 1].id : null;
     }
-    await refreshFolder(parentFolder);
+    refreshAllFiles();
     renderAll();
   } catch (err) {
     alert('删除失败：' + err.message);
   }
+}
+
+function deleteFromTree(nodes, targetHandle) {
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].handle === targetHandle) { nodes.splice(i, 1); return true; }
+    if (nodes[i].children && deleteFromTree(nodes[i].children, targetHandle)) return true;
+  }
+  return false;
 }
 
 // ========== 文件监听（HTML 实时预览）==========
@@ -1595,7 +1670,6 @@ function renderFolderList() {
     actions.innerHTML = `
       <button class="folder-btn" title="新建文件" data-action="newfile">📄</button>
       <button class="folder-btn" title="新建文件夹" data-action="newfolder">📁</button>
-      <button class="folder-btn" title="刷新" data-action="refresh">🔄</button>
       <button class="folder-btn danger" title="移除文件夹" data-action="remove">✕</button>
     `;
 
@@ -1627,11 +1701,6 @@ function renderFolderList() {
       if (e.target.closest('[data-action="newfolder"]')) {
         e.stopPropagation();
         createFolder(folder.handle, folder);
-        return;
-      }
-      if (e.target.closest('[data-action="refresh"]')) {
-        e.stopPropagation();
-        refreshFolder(folder);
         return;
       }
       if (e.target.closest('[data-action="remove"]')) {
@@ -2372,38 +2441,100 @@ dom.sidebar.addEventListener('drop', async (e) => {
 });
 
 // ========== 启动：自动恢复已保存的文件夹 ==========
+let pendingRestore = []; // 需要用户手势重新授权的文件夹
+
 async function init() {
   const saved = await getSavedFolders();
+  pendingRestore = [];
 
   for (const { id, name, handle } of saved) {
-    if (!handle) continue; // 旧数据没有句柄，跳过
+    if (!handle) continue;
 
     try {
-      // 检查权限
       const perm = await handle.queryPermission({ mode: 'readwrite' });
       if (perm === 'granted') {
-        // 权限有效，直接恢复
         const folder = { id, name: handle.name, handle, children: [], expanded: true };
         state.folders.push(folder);
         await loadFolderChildren(folder);
+      } else if (perm === 'prompt') {
+        // 需要用户手势才能重新授权，先记下来
+        pendingRestore.push({ id, name, handle });
       } else {
-        // 权限过期，尝试重新请求（需要用户手势，这里静默跳过）
-        // 用户可以手动重新添加
+        // 'denied'，从存储中移除
+        await removeSavedFolder(id);
       }
     } catch (err) {
-      // 句柄失效，从数据库中移除
       await removeSavedFolder(id);
     }
   }
 
-  if (state.folders.length === 0) {
-    // 首次使用，提示添加文件夹
+  if (state.folders.length === 0 && pendingRestore.length === 0) {
     const suggest = confirm('欢迎使用拾元文件夹！\n\n是否立即添加一个文件夹开始管理？');
     if (suggest) await addFolder();
   }
 
   refreshAllFiles();
   renderAll();
+
+  // 有待恢复的文件夹，显示恢复按钮
+  if (pendingRestore.length > 0) {
+    showRestoreBanner();
+  }
+}
+
+function showRestoreBanner() {
+  // 在侧边栏顶部插入恢复提示
+  const banner = document.createElement('div');
+  banner.id = 'restore-banner';
+  banner.style.cssText = `
+    margin: 8px 12px;
+    padding: 10px 12px;
+    background: rgba(0,122,255,0.08);
+    border: 1px solid rgba(0,122,255,0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: center;
+  `;
+  banner.innerHTML = `
+    <div style="color:var(--text-secondary);margin-bottom:6px">
+      有 ${pendingRestore.length} 个文件夹待恢复
+    </div>
+    <button id="restore-btn" style="
+      padding: 4px 14px;
+      font-size: 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font);
+    ">🔄 一键恢复</button>
+  `;
+  dom.folderList.prepend(banner);
+
+  banner.querySelector('#restore-btn').addEventListener('click', async () => {
+    const btn = banner.querySelector('#restore-btn');
+    btn.textContent = '恢复中...';
+    btn.disabled = true;
+
+    for (const item of pendingRestore) {
+      try {
+        const perm = await item.handle.requestPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+          const folder = { id: item.id, name: item.handle.name, handle: item.handle, children: [], expanded: true };
+          state.folders.push(folder);
+          await loadFolderChildren(folder);
+        }
+      } catch (err) {
+        await removeSavedFolder(item.id);
+      }
+    }
+
+    pendingRestore = [];
+    banner.remove();
+    refreshAllFiles();
+    renderAll();
+  });
 }
 
 init().catch(console.error);
