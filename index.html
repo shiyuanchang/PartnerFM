@@ -223,6 +223,17 @@ body {
 .tree-item.depth-2 { padding-left: 52px; }
 .tree-item.depth-3 { padding-left: 66px; }
 
+/* 拖拽移动 */
+.tree-item.dragging {
+  opacity: 0.35;
+}
+.tree-item.drop-target {
+  background: rgba(0,122,255,0.12);
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-radius: 4px;
+}
+
 /* 侧边栏底部 */
 .sidebar-bottom {
   padding: 8px;
@@ -900,14 +911,12 @@ function openDB() {
   });
 }
 
-async function saveFolderHandle(id, name) {
+async function saveFolderHandle(id, name, handle) {
   const db = await openDB();
-  // FileSystemDirectoryHandle 不能直接存 IndexedDB
-  // 存文件夹名称，重新打开时请求权限
   return new Promise((resolve, reject) => {
     const tx = db.transaction('folders', 'readwrite');
     const store = tx.objectStore('folders');
-    store.put({ id, name, addedAt: Date.now() });
+    store.put({ id, name, handle, addedAt: Date.now() });
     tx.oncomplete = resolve;
     tx.onerror = reject;
   });
@@ -1052,7 +1061,7 @@ async function addFolder() {
     const folder = { id, name: handle.name, handle, children: [], expanded: true };
     state.folders.push(folder);
     await loadFolderChildren(folder);
-    await saveFolderHandle(id, handle.name);
+    await saveFolderHandle(id, handle.name, handle);
     refreshAllFiles();
     renderAll();
   } catch (err) {
@@ -1092,7 +1101,7 @@ async function handleDrop(e) {
     const folder = { id, name: handle.name, handle, children: [], expanded: true };
     state.folders.push(folder);
     await loadFolderChildren(folder);
-    await saveFolderHandle(id, handle.name);
+    await saveFolderHandle(id, handle.name, handle);
     added++;
   }
 
@@ -1218,7 +1227,8 @@ dom.modalOverlay.addEventListener('click', (e) => {
 let createFileResolve = null;
 let createFileLocation = null; // { handle, folder: null | state folder ref }
 
-function showCreateFileModal(targetFolder) {
+function showCreateFileModal(target) {
+  // target 可以是 { handle, name } 或顶层 folder 对象，或 null
   modalMode = 'create-file';
   dom.modalTitle.textContent = '新建文件';
   dom.modalInput.placeholder = '输入文件名（不含扩展名）';
@@ -1230,10 +1240,11 @@ function showCreateFileModal(targetFolder) {
   dom.modalTypeSelect.value = '0';
 
   // 保存位置
-  if (targetFolder) {
-    createFileLocation = { handle: targetFolder.handle, folder: targetFolder };
-    dom.modalLocationText.textContent = '📁 ' + targetFolder.name;
-    dom.modalLocationBtn.style.display = 'none';
+  if (target) {
+    createFileLocation = { handle: target.handle, folder: findFolderForHandle(target.handle) };
+    dom.modalLocationText.textContent = '📁 ' + target.name;
+    dom.modalLocationBtn.textContent = '更换';
+    dom.modalLocationBtn.style.display = '';
   } else if (state.folders.length > 0) {
     const first = state.folders[0];
     createFileLocation = { handle: first.handle, folder: first };
@@ -1309,28 +1320,40 @@ dom.modalConfirm.addEventListener('click', async () => {
 });
 
 async function createFile(parentHandle, parentFolder) {
+  // 兼容旧的调用方式（右键文件夹头部按钮）
   const result = await showCreateFileModal(parentFolder);
   if (!result) return;
+  await doCreateFile(result);
+}
 
+async function createFileInLocation(target) {
+  // 在指定位置新建文件（用于右键子文件夹）
+  const result = await showCreateFileModal(target);
+  if (!result) return;
+  await doCreateFile(result);
+}
+
+async function doCreateFile(result) {
   try {
     const fileHandle = await result.location.handle.getFileHandle(result.fileName, { create: true });
     const writable = await fileHandle.createWritable();
     await writable.write(result.template);
     await writable.close();
 
-    // 如果是新文件夹（不在 state 中），自动添加到侧边栏
-    if (!result.location.folder) {
+    // 如果位置不在已添加的文件夹中，自动添加
+    const folder = result.location.folder;
+    if (!folder) {
       const handle = result.location.handle;
       const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-      const folder = { id, name: handle.name, handle, children: [], expanded: true };
-      state.folders.push(folder);
-      await loadFolderChildren(folder);
-      await saveFolderHandle(id, handle.name);
+      const newFolder = { id, name: handle.name, handle, children: [], expanded: true };
+      state.folders.push(newFolder);
+      await loadFolderChildren(newFolder);
+      await saveFolderHandle(id, handle.name, handle);
     }
 
-    // 刷新
-    if (result.location.folder) {
-      await refreshFolder(result.location.folder);
+    // 刷新相关文件夹
+    if (folder) {
+      await refreshFolder(folder);
     } else {
       refreshAllFiles();
       renderAll();
@@ -1458,7 +1481,9 @@ function showContextMenu(x, y, node, parentFolder) {
   const items = [];
 
   if (isDir) {
-    items.push({ label: '📄 新建文件', cls: '', action: () => createFile(node.handle, parentFolder) });
+    // 使用 node 本身作为目标位置（handle 用于创建，name 用于显示）
+    const target = { handle: node.handle, name: node.name };
+    items.push({ label: '📄 新建文件', cls: '', action: () => createFileInLocation(target) });
     items.push({ label: '📁 新建文件夹', cls: '', action: () => createFolder(node.handle, parentFolder) });
     items.push({ sep: true });
   }
@@ -1625,6 +1650,26 @@ function renderFolderList() {
       showContextMenu(e.clientX, e.clientY, fakeNode, folder);
     });
 
+    // 拖拽到顶层文件夹根目录
+    header.addEventListener('dragover', (e) => {
+      if (!dragData) return;
+      if (dragData.node.handle === folder.handle) return;
+      if (dragData.node.kind === 'directory' && isDescendant(dragData.node, folder.handle)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      header.style.background = 'rgba(0,122,255,0.1)';
+    });
+    header.addEventListener('dragleave', () => {
+      header.style.background = '';
+    });
+    header.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      header.style.background = '';
+      if (!dragData) return;
+      await moveEntry(dragData.node.handle, folder.handle, dragData.sourceFolder, folder);
+      dragData = null;
+    });
+
     dom.folderList.appendChild(section);
   }
 }
@@ -1740,12 +1785,49 @@ function renderTreeNodes(nodes, container, filter) {
     item.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const folder = state.folders.find(f =>
-        f.handle === node.handle || hasChildHandle(f.children, node.handle)
-      );
+      const folder = findFolderForHandle(node.handle);
       if (folder) {
         showContextMenu(e.clientX, e.clientY, node, folder);
       }
+    });
+
+    // 拖拽：所有节点都可拖
+    item.draggable = true;
+    item.addEventListener('dragstart', (e) => {
+      dragData = { node, sourceFolder: findFolderForHandle(node.handle) };
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      dragData = null;
+      item.classList.remove('dragging');
+      // 清除所有 drop-target
+      document.querySelectorAll('.tree-item.drop-target').forEach(el => el.classList.remove('drop-target'));
+    });
+
+    // 拖拽悬停：仅文件夹可接受
+    item.addEventListener('dragover', (e) => {
+      if (!isDir || !dragData) return;
+      if (dragData.node.handle === node.handle) return; // 不能拖到自己
+      if (dragData.node.kind === 'directory' && isDescendant(dragData.node, node.handle)) return; // 不能拖到子目录
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      item.classList.add('drop-target');
+    });
+    item.addEventListener('dragleave', () => {
+      item.classList.remove('drop-target');
+    });
+
+    // 放下：执行移动
+    item.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      item.classList.remove('drop-target');
+      if (!isDir || !dragData) return;
+      if (dragData.node.handle === node.handle) return;
+      const targetFolder = findFolderForHandle(node.handle);
+      await moveEntry(dragData.node.handle, node.handle, dragData.sourceFolder, targetFolder);
+      dragData = null;
     });
 
     wrapper.appendChild(item);
@@ -1773,6 +1855,74 @@ function hasChildHandle(children, targetHandle) {
     if (node.children && hasChildHandle(node.children, targetHandle)) return true;
   }
   return false;
+}
+
+function isDescendant(node, targetHandle) {
+  if (!node.children) return false;
+  return hasChildHandle(node.children, targetHandle);
+}
+
+// ========== 拖拽移动文件 ==========
+let dragData = null; // { node, sourceFolder }
+
+function findFolderForHandle(handle) {
+  // 在 state.folders 中查找包含该 handle 的顶层文件夹
+  for (const folder of state.folders) {
+    if (folder.handle === handle) return folder;
+    if (hasChildHandle(folder.children, handle)) return folder;
+  }
+  return null;
+}
+
+function findNodeParent(nodes, targetHandle) {
+  for (const node of nodes) {
+    if (node.children) {
+      for (const child of node.children) {
+        if (child.handle === targetHandle) return node;
+      }
+      const found = findNodeParent(node.children, targetHandle);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+async function moveEntry(sourceHandle, targetDirHandle, sourceFolder, targetFolder) {
+  try {
+    if (typeof sourceHandle.move === 'function') {
+      await sourceHandle.move(targetDirHandle);
+    } else if (typeof sourceHandle.remove === 'function') {
+      // 降级：复制+删除（仅文件）
+      if (sourceHandle.kind === 'file') {
+        const file = await sourceHandle.getFile();
+        const newHandle = await targetDirHandle.getFileHandle(file.name, { create: true });
+        const writable = await newHandle.createWritable();
+        await writable.write(await file.arrayBuffer());
+        await writable.close();
+        await sourceHandle.remove();
+      } else {
+        alert('当前浏览器不支持移动文件夹，请更新浏览器或在访达中操作');
+        return false;
+      }
+    } else {
+      alert('当前浏览器不支持此操作，请更新 Chrome/Edge');
+      return false;
+    }
+
+    // 关闭源文件的标签（如果打开）
+    state.openTabs = state.openTabs.filter(t => t.handle !== sourceHandle);
+
+    // 刷新两个文件夹
+    if (sourceFolder) await refreshFolder(sourceFolder);
+    if (targetFolder && targetFolder !== sourceFolder) await refreshFolder(targetFolder);
+
+    refreshAllFiles();
+    renderAll();
+    return true;
+  } catch (err) {
+    alert('移动失败：' + err.message);
+    return false;
+  }
 }
 
 // ========== 标签管理 ==========
@@ -2221,41 +2371,34 @@ dom.sidebar.addEventListener('drop', async (e) => {
   await handleDrop(e);
 });
 
-// ========== 启动：尝试恢复已保存的文件夹 ==========
+// ========== 启动：自动恢复已保存的文件夹 ==========
 async function init() {
   const saved = await getSavedFolders();
-  if (saved.length > 0) {
-    // 提示用户重新选择文件夹以获取权限
-    const names = saved.map(s => s.name).join('、');
-    const restore = confirm(
-      `检测到之前的文件夹：\n${names}\n\n是否重新授权访问这些文件夹？\n（需要在弹出的对话框中选择对应文件夹）`
-    );
-    if (restore) {
-      for (const { id, name } of saved) {
-        try {
-          const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
-          if (handle.name === name || confirm(`你选择了「${handle.name}」，是否添加？（原文件夹为「${name}」）`)) {
-            const folder = { id, name: handle.name, handle, children: [], expanded: true };
-            state.folders.push(folder);
-            await loadFolderChildren(folder);
-            // 更新存储的名称
-            await saveFolderHandle(id, handle.name);
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') break; // 用户取消
-        }
+
+  for (const { id, name, handle } of saved) {
+    if (!handle) continue; // 旧数据没有句柄，跳过
+
+    try {
+      // 检查权限
+      const perm = await handle.queryPermission({ mode: 'readwrite' });
+      if (perm === 'granted') {
+        // 权限有效，直接恢复
+        const folder = { id, name: handle.name, handle, children: [], expanded: true };
+        state.folders.push(folder);
+        await loadFolderChildren(folder);
+      } else {
+        // 权限过期，尝试重新请求（需要用户手势，这里静默跳过）
+        // 用户可以手动重新添加
       }
-    } else {
-      // 清除存储
-      const db = await openDB();
-      const tx = db.transaction('folders', 'readwrite');
-      tx.objectStore('folders').clear();
+    } catch (err) {
+      // 句柄失效，从数据库中移除
+      await removeSavedFolder(id);
     }
   }
 
   if (state.folders.length === 0) {
-    // 检查是否从 拾元文件夹 目录打开，自动建议添加
-    const suggest = confirm('是否立即添加一个文件夹开始管理？');
+    // 首次使用，提示添加文件夹
+    const suggest = confirm('欢迎使用拾元文件夹！\n\n是否立即添加一个文件夹开始管理？');
     if (suggest) await addFolder();
   }
 
