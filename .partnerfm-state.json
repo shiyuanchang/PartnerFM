@@ -1,0 +1,29 @@
+{
+  "openTabs": [
+    {
+      "id": "1781017542793",
+      "name": "教育内容生产工作流手册.md",
+      "icon": "📝",
+      "folderId": "folder_1781017538308_amf0",
+      "relativePath": "小红书教育/教育内容生产工作流手册.md"
+    },
+    {
+      "id": "1781056628728",
+      "name": "智能体原理.md",
+      "icon": "📝",
+      "folderId": "folder_1781017538308_amf0",
+      "relativePath": "小红书AI/素材/智能体原理.md"
+    }
+  ],
+  "activeTabId": "1781056628728",
+  "expandedNodes": [
+    "folder_1781017538308_amf0/小红书教育",
+    "folder_1781017538308_amf0/小绿书银发/素材",
+    "folder_1781017538308_amf0/小红书AI",
+    "folder_1781017538308_amf0/小红书AI/素材"
+  ],
+  "customOrder": [],
+  "folderExpanded": {
+    "folder_1781017538308_amf0": true
+  }
+}
