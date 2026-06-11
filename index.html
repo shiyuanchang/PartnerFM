@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>拾元文件夹</title>
+<title>PartnerFM</title>
 <style>
 /* ========== 基础 ========== */
 :root {
@@ -68,7 +68,7 @@ body {
   padding: 20px 16px 12px;
 }
 .sidebar-top h1 {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.2px;
   color: var(--text);
@@ -92,7 +92,7 @@ body {
 .search-wrap input {
   width: 100%;
   padding: 7px 10px 7px 28px;
-  font-size: 13px;
+  font-size: 14px;
   background: #e5e5ea;
   color: var(--text);
   border: none;
@@ -111,7 +111,7 @@ body {
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-tertiary);
   pointer-events: none;
 }
@@ -153,19 +153,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-secondary);
   transition: transform 0.15s;
   flex-shrink: 0;
 }
 .folder-header .folder-chevron.expanded { transform: rotate(90deg); }
 .folder-header .folder-icon {
-  font-size: 15px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 .folder-header .folder-name {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -185,7 +185,7 @@ body {
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,7 +206,7 @@ body {
   align-items: center;
   padding: 3px 8px 3px 24px;
   cursor: pointer;
-  font-size: 12.5px;
+  font-size: 13.5px;
   white-space: nowrap;
   border-radius: 4px;
   margin: 0 4px;
@@ -217,7 +217,7 @@ body {
 }
 .tree-item:hover { background: rgba(0,0,0,0.05); color: var(--text); }
 .tree-item.active { background: rgba(0,122,255,0.1); color: var(--accent); font-weight: 500; }
-.tree-item .item-icon { width: 15px; text-align: center; flex-shrink: 0; font-size: 13px; }
+.tree-item .item-icon { width: 15px; text-align: center; flex-shrink: 0; font-size: 14px; }
 .tree-item .item-name { overflow: hidden; text-overflow: ellipsis; flex: 1; }
 .tree-item.depth-1 { padding-left: 38px; }
 .tree-item.depth-2 { padding-left: 52px; }
@@ -233,6 +233,12 @@ body {
   outline-offset: -1px;
   border-radius: 4px;
 }
+.tree-item.drop-above {
+  border-top: 2px solid var(--accent);
+}
+.tree-item.drop-below {
+  border-bottom: 2px solid var(--accent);
+}
 
 /* 侧边栏底部 */
 .sidebar-bottom {
@@ -244,7 +250,7 @@ body {
 .sidebar-bottom button {
   flex: 1;
   padding: 6px;
-  font-size: 12px;
+  font-size: 13px;
   border: 1px solid var(--border);
   background: #fff;
   border-radius: 6px;
@@ -290,6 +296,8 @@ body {
 #sidebar.drag-over .drop-hint { display: flex; }
 
 #sidebar { position: relative; }
+.sidebar-resize-handle { position: absolute; right: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 5; }
+.sidebar-resize-handle:hover, .sidebar-resize-handle:active { background: rgba(0,122,255,0.2); }
 
 /* ========== 主内容区 ========== */
 #main-panel {
@@ -569,6 +577,35 @@ body {
   padding: 8px 16px;
   border-radius: 6px;
 }
+.office-meta-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px; font-size: 12px; color: var(--text-secondary);
+  background: #f8f8fc; border-bottom: 1px solid var(--border);
+}
+.office-preview { padding: 24px 32px; }
+.office-preview table {
+  border-collapse: collapse; width: max-content; min-width: 100%;
+  font-size: 13px; font-family: var(--font);
+}
+.office-preview table td, .office-preview table th {
+  border: 1px solid #d1d1d6; padding: 6px 12px; text-align: left;
+}
+.office-preview table th { background: #f2f2f7; font-weight: 600; }
+.office-preview table tr:hover td { background: #f8f8fc; }
+.xlsx-sheet-name {
+  font-size: 15px; font-weight: 600; margin: 20px 0 8px; padding: 0;
+}
+.xlsx-sheet-name:first-child { margin-top: 0; }
+.pptx-slide {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 28px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.pptx-slide-num {
+  font-size: 11px; font-weight: 600; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.pptx-slide p { font-size: 14px; line-height: 1.7; color: var(--text); }
 
 /* ========== 快速切换 ========== */
 #quick-overlay {
@@ -645,6 +682,27 @@ body {
   border-top: 1px solid var(--border);
   min-height: 26px;
 }
+#fullscreen-btn {
+  background: none; border: 1px solid var(--border); border-radius: 4px;
+  cursor: pointer; font-size: 13px; padding: 1px 6px; color: var(--text-tertiary);
+  transition: all 0.1s; line-height: 1.4;
+}
+#fullscreen-btn:hover { background: #f0f0f5; color: var(--text); }
+#main-layout.fullscreen #module-nav { display: none !important; }
+#main-layout.fullscreen #sidebar { display: none !important; }
+#main-layout.fullscreen #chat-column { display: none !important; }
+#main-panel:fullscreen { background: #fff; overflow: auto; }
+#main-panel:fullscreen #tab-bar { display: none; }
+#main-panel:fullscreen .md-toolbar { display: none; }
+#main-panel:fullscreen #status-bar { display: none; }
+#main-panel:fullscreen #content-area { padding: 0; }
+#main-panel:fullscreen .text-viewer,
+#main-panel:fullscreen .md-viewer,
+#main-panel:fullscreen .html-viewer { padding: 40px 60px; max-width: 960px; margin: 0 auto; }
+#main-panel:fullscreen .pdf-viewer { width: 100%; height: 100%; }
+#main-panel:fullscreen .image-viewer-wrap { display: flex; align-items: center; justify-content: center; height: 100%; }
+#main-panel:fullscreen .image-viewer-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#main-panel:fullscreen .office-preview { padding: 40px 60px; max-width: 1200px; margin: 0 auto; }
 
 /* ========== 右键菜单 ========== */
 #context-menu {
@@ -808,7 +866,7 @@ body {
 }
 
 /* ========== 模块导航 ========== */
-:root { --nav-width: 64px; --chat-width: 380px; }
+:root { --nav-width: 52px; --chat-width: 380px; }
 #module-nav {
   width: var(--nav-width); min-width: 52px;
   background: rgba(248,248,252,0.9);
@@ -817,31 +875,50 @@ body {
   display: flex; flex-direction: column; align-items: center;
   padding-top: 12px; gap: 4px; position: relative; z-index: 10;
 }
-#module-nav.collapsed { width: 0; min-width: 0; overflow: hidden; border: none; }
+#module-nav.collapsed { flex: 0 0 0; width: 0; min-width: 0; max-width: 0; overflow: hidden; border: none; }
 .module-btn {
   width: 48px; height: 48px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 2px;
   border-radius: 10px; border: none; background: transparent;
-  cursor: pointer; font-family: var(--font); font-size: 10px;
+  cursor: pointer; font-family: var(--font); font-size: 11px;
   color: var(--text-secondary); transition: all 0.12s;
 }
 .module-btn:hover { background: rgba(0,0,0,0.05); color: var(--text); }
 .module-btn.active { background: rgba(0,122,255,0.1); color: var(--accent); font-weight: 600; }
 .module-btn .mb-icon { font-size: 20px; line-height: 1; }
-.module-btn .mb-label { font-size: 10px; line-height: 1.2; }
+.module-btn .mb-label { font-size: 11px; line-height: 1.2; }
+.module-nav-resize-handle { position: absolute; right: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 5; }
+.module-nav-resize-handle:hover, .module-nav-resize-handle:active { background: rgba(0,122,255,0.2); }
 #nav-toggle {
   margin-top: auto; margin-bottom: 8px; width: 36px; height: 36px;
   border-radius: 50%; border: 1px solid var(--border); background: #fff;
   cursor: pointer; font-size: 14px; color: var(--text-tertiary);
   display: flex; align-items: center; justify-content: center; transition: all 0.12s;
+  position: relative; z-index: 20;
 }
 #nav-toggle:hover { background: #f0f0f5; color: var(--text); }
+
+/* 折叠恢复按钮 */
+#nav-restore, #chat-restore {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 22px; height: 56px;
+  background: rgba(248,248,252,0.95);
+  border: 1px solid var(--border);
+  cursor: pointer; font-size: 11px; color: var(--text-tertiary);
+  z-index: 30; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; opacity: 0; pointer-events: none;
+}
+#nav-restore { left: 0; border-left: none; border-radius: 0 8px 8px 0; }
+#chat-restore { right: 0; border-right: none; border-radius: 8px 0 0 8px; }
+#nav-restore.show, #chat-restore.show { opacity: 1; pointer-events: auto; }
+#nav-restore:hover, #chat-restore:hover { background: #fff; color: var(--accent); width: 24px; }
 
 /* ========== 中间列 ========== */
 #center-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 .module-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
 .module-content.active { display: flex; }
-#file-module { display: flex; flex-direction: row; flex: 1; overflow: hidden; }
+#file-module { flex-direction: row; flex: 1; overflow: hidden; }
+#file-module.active { display: flex; }
 
 /* ========== 管理面板 ========== */
 .mgmt-panel { padding: 28px 36px; overflow-y: auto; flex: 1; }
@@ -852,6 +929,20 @@ body {
   padding: 16px 20px; margin-bottom: 10px; transition: all 0.12s;
 }
 .mgmt-card:hover { box-shadow: var(--shadow); }
+
+/* 提供商列表 */
+.provider-list { display:flex; flex-direction:column; gap:2px; }
+.provider-section-title { font-size:11px; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.5px; padding:12px 14px 6px; }
+.provider-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; cursor:pointer; transition:background 0.1s; }
+.provider-item:hover { background:rgba(0,0,0,0.04); }
+.provider-item .pi-icon { font-size:22px; flex-shrink:0; }
+.provider-item .pi-info { flex:1; }
+.provider-item .pi-name { font-size:14px; font-weight:600; }
+.provider-item .pi-desc { font-size:11px; color:var(--text-tertiary); }
+.provider-item .pi-arrow { color:var(--text-tertiary); font-size:14px; flex-shrink:0; }
+.provider-sep { height:1px; background:var(--border); margin:8px 0; }
+
+/* 已有模型卡片 */
 .mgmt-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .mgmt-card-header .mgmt-icon { font-size: 24px; }
 .mgmt-card-header h4 { font-size: 15px; font-weight: 600; flex: 1; }
@@ -862,6 +953,38 @@ body {
 .mgmt-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
 .mgmt-card code { background: #f2f2f7; padding: 1px 5px; border-radius: 3px; font-family: var(--font-mono); font-size: 11px; }
 .mgmt-card pre { background: #f2f2f7; padding: 10px 14px; border-radius: 6px; font-family: var(--font-mono); font-size: 11px; overflow-x: auto; margin: 8px 0; line-height: 1.5; }
+
+.prompt-add-btn { font-size:12px; padding:6px 14px; border-radius:6px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; font-family:var(--font); margin-bottom:16px; }
+.prompt-add-btn:hover { opacity:0.9; }
+.prompt-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:14px 18px; margin-bottom:8px; display:flex; align-items:flex-start; gap:12px; }
+.prompt-card:hover { box-shadow:var(--shadow); }
+.prompt-card-body { flex:1; min-width:0; }
+.prompt-card-body h4 { font-size:14px; font-weight:600; margin:0 0 4px; }
+.prompt-card-body p { font-size:12px; color:var(--text-secondary); margin:0; line-height:1.5; white-space:pre-wrap; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.prompt-card-actions { display:flex; gap:4px; flex-shrink:0; }
+.prompt-card-actions button { font-size:11px; padding:3px 10px; border-radius:4px; border:1px solid var(--border); background:#fff; cursor:pointer; color:var(--text-secondary); font-family:var(--font); }
+.prompt-card-actions button:hover { background:#f0f0f5; color:var(--text); }
+.prompt-card-actions .prompt-del-btn:hover { background:#fff3f3; color:#c62828; border-color:#ffcdd2; }
+
+#prompt-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.25); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); z-index:4000; align-items:center; justify-content:center; }
+#prompt-modal.open { display:flex; }
+#prompt-modal .pm-box { background:#fff; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.15); width:480px; max-width:92vw; max-height:85vh; overflow-y:auto; }
+#prompt-modal .pm-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 0; }
+#prompt-modal .pm-header h3 { font-size:17px; font-weight:700; margin:0; }
+#prompt-modal .pm-close { width:28px; height:28px; border-radius:50%; border:none; background:transparent; cursor:pointer; font-size:18px; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; transition:all 0.1s; }
+#prompt-modal .pm-close:hover { background:#f2f2f7; color:var(--text); }
+#prompt-modal .pm-body { padding:16px 24px 24px; }
+#prompt-modal .pm-body .pm-field { margin-bottom:14px; }
+#prompt-modal .pm-body .pm-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; }
+#prompt-modal .pm-body .pm-label .pm-required { color:#ff3b30; margin-left:2px; }
+#prompt-modal .pm-body input, #prompt-modal .pm-body textarea { width:100%; padding:9px 12px; font-size:14px; border:1px solid var(--border); border-radius:8px; outline:none; font-family:var(--font); color:var(--text); transition:border-color 0.15s; background:#fff; box-sizing:border-box; }
+#prompt-modal .pm-body input:focus, #prompt-modal .pm-body textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,0.1); }
+#prompt-modal .pm-body textarea { resize:vertical; min-height:100px; }
+#prompt-modal .pm-footer { display:flex; justify-content:flex-end; gap:8px; padding:0 24px 20px; }
+#prompt-modal .pm-footer .pm-btn-cancel { padding:8px 20px; font-size:13px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-family:var(--font); color:var(--text); transition:all 0.1s; }
+#prompt-modal .pm-footer .pm-btn-cancel:hover { background:#f0f0f5; }
+#prompt-modal .pm-footer .pm-btn-submit { padding:8px 20px; font-size:13px; border-radius:8px; border:none; background:var(--accent); color:#fff; cursor:pointer; font-family:var(--font); font-weight:600; transition:all 0.1s; }
+#prompt-modal .pm-footer .pm-btn-submit:hover { background:var(--accent-hover); }
 
 .model-form { max-width: 520px; }
 .form-group { margin-bottom: 14px; }
@@ -874,6 +997,75 @@ body {
 .form-group select { background: #fff; cursor: pointer; appearance: none; -webkit-appearance: none; }
 .api-key-wrap { position: relative; }
 .api-key-wrap input { padding-right: 50px; }
+
+/* ========== Provider 卡片 ========== */
+.provider-card {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 20px; margin-bottom: 12px; transition: box-shadow 0.15s;
+}
+.provider-card:hover { box-shadow: var(--shadow-lg); }
+.provider-card .pc-top { display:flex; align-items:center; gap: 10px; margin-bottom: 14px; }
+.provider-card .pc-top .pc-name { font-size: 16px; font-weight: 700; flex:1; }
+.provider-card .pc-top .pc-badge-default { font-size:11px; padding:2px 8px; border-radius:10px; background:#fff3e0; color:#e65100; font-weight:500; }
+.provider-card .pc-top .pc-badge-builtin { font-size:11px; padding:2px 8px; border-radius:10px; background:#f2f2f7; color:var(--text-tertiary); font-weight:500; }
+.provider-card .pc-info-row { display:flex; align-items:center; padding:5px 0; font-size:13px; }
+.provider-card .pc-info-row .pc-label { color:var(--text-tertiary); width:90px; flex-shrink:0; }
+.provider-card .pc-info-row .pc-value { color:var(--text); font-family:var(--font-mono); font-size:12px; }
+.provider-card .pc-model-section { margin-top:12px; }
+.provider-card .pc-model-header { display:flex; align-items:center; justify-content:space-between; padding:6px 0; font-size:12px; color:var(--text-tertiary); font-weight:500; border-top:1px solid var(--border); }
+.provider-card .pc-model-tags { display:flex; flex-wrap:wrap; gap:6px; padding:8px 0; }
+.provider-card .pc-model-tag { display:inline-flex; align-items:center; gap:4px; font-size:12px; padding:3px 10px; border-radius:6px; background:#f2f2f7; color:var(--text-secondary); font-family:var(--font-mono); }
+.provider-card .pc-model-tag.is-default { background:rgba(0,122,255,0.08); color:var(--accent); font-weight:500; }
+.provider-card .pc-model-tag .is-default-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.provider-card .pc-actions { display:flex; align-items:center; gap:12px; padding-top:10px; margin-top:10px; border-top:1px solid var(--border); }
+.provider-card .pc-actions .pc-btn { font-size:12px; color:var(--text-secondary); cursor:pointer; padding:4px 0; transition:color 0.1s; background:none; border:none; font-family:var(--font); }
+.provider-card .pc-actions .pc-btn:hover { color:var(--accent); }
+.provider-card .pc-actions .pc-btn.danger { color:#ff3b30; }
+.provider-card .pc-actions .pc-btn.danger:hover { color:#c62828; }
+
+/* ========== Provider 弹窗 ========== */
+#provider-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.25); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); z-index:4000; align-items:center; justify-content:center; }
+#provider-modal.open { display:flex; }
+#provider-modal .pm-box { background:#fff; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.15); width:520px; max-width:92vw; max-height:85vh; overflow-y:auto; }
+#provider-modal .pm-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 0; }
+#provider-modal .pm-header h3 { font-size:17px; font-weight:700; }
+#provider-modal .pm-close { width:28px; height:28px; border-radius:50%; border:none; background:transparent; cursor:pointer; font-size:18px; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; transition:all 0.1s; }
+#provider-modal .pm-close:hover { background:#f2f2f7; color:var(--text); }
+#provider-modal .pm-body { padding:16px 24px 24px; }
+#provider-modal .pm-body .pm-field { margin-bottom:16px; }
+#provider-modal .pm-body .pm-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; }
+#provider-modal .pm-body .pm-label .pm-required { color:#ff3b30; margin-left:2px; }
+#provider-modal .pm-body input, #provider-modal .pm-body select { width:100%; padding:9px 12px; font-size:14px; border:1px solid var(--border); border-radius:8px; outline:none; font-family:var(--font); color:var(--text); transition:border-color 0.15s; background:#fff; }
+#provider-modal .pm-body input:focus, #provider-modal .pm-body select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,0.1); }
+#provider-modal .pm-body select { appearance:none; -webkit-appearance:none; padding-right:32px; }
+#provider-modal .pm-body .pm-type-toggle { display:flex; background:#f2f2f7; border-radius:8px; padding:3px; gap:3px; }
+#provider-modal .pm-body .pm-type-opt { flex:1; text-align:center; padding:7px 0; font-size:13px; border-radius:6px; cursor:pointer; transition:all 0.15s; color:var(--text-secondary); font-weight:500; border:none; background:transparent; font-family:var(--font); }
+#provider-modal .pm-body .pm-type-opt.active { background:#fff; color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+#provider-modal .pm-body .pm-fetch-row { display:flex; gap:8px; }
+#provider-modal .pm-body .pm-fetch-row select { flex:1; }
+#provider-modal .pm-body .pm-fetch-row .pm-fetch-btn { flex-shrink:0; padding:9px 16px; font-size:13px; border:1px solid var(--border); border-radius:8px; background:#fff; cursor:pointer; font-family:var(--font); color:var(--accent); font-weight:500; transition:all 0.1s; white-space:nowrap; }
+#provider-modal .pm-body .pm-fetch-row .pm-fetch-btn:hover { background:#f0f0f5; }
+#provider-modal .pm-body .pm-fetch-row .pm-fetch-btn:disabled { opacity:0.5; cursor:not-allowed; }
+#provider-modal .pm-body .pm-fetch-status { font-size:11px; color:var(--text-tertiary); margin-top:4px; }
+#provider-modal .pm-body .pm-fetch-status.error { color:#ff3b30; }
+#provider-modal .pm-footer { display:flex; justify-content:flex-end; gap:8px; padding-top:4px; }
+#provider-modal .pm-footer .pm-btn-cancel { padding:8px 20px; font-size:13px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-family:var(--font); color:var(--text); transition:all 0.1s; }
+#provider-modal .pm-footer .pm-btn-cancel:hover { background:#f0f0f5; }
+#provider-modal .pm-footer .pm-btn-submit { padding:8px 20px; font-size:13px; border-radius:8px; border:none; background:var(--accent); color:#fff; cursor:pointer; font-family:var(--font); font-weight:600; transition:all 0.1s; }
+#provider-modal .pm-footer .pm-btn-submit:hover { background:var(--accent-hover); }
+#provider-modal .pm-footer .pm-btn-submit:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* ========== 内联编辑弹窗 ========== */
+#inline-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.15); z-index:3500; align-items:center; justify-content:center; }
+#inline-modal.open { display:flex; }
+#inline-modal .im-box { background:#fff; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.12); padding:20px 24px; width:360px; max-width:92vw; }
+#inline-modal .im-box h4 { font-size:15px; font-weight:600; margin-bottom:14px; }
+#inline-modal .im-box input { width:100%; padding:8px 12px; font-size:14px; border:1px solid var(--border); border-radius:6px; outline:none; font-family:var(--font); color:var(--text); }
+#inline-modal .im-box input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,0.1); }
+#inline-modal .im-btns { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+#inline-modal .im-btns button { padding:6px 16px; font-size:13px; border-radius:6px; border:none; cursor:pointer; font-family:var(--font); font-weight:500; }
+#inline-modal .im-btns .im-cancel { background:#f2f2f7; color:var(--text); }
+#inline-modal .im-btns .im-confirm { background:var(--accent); color:#fff; }
 .api-key-wrap .toggle-key {
   position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text-tertiary); padding: 4px;
@@ -891,20 +1083,52 @@ body {
 }
 .remove-model-btn:hover { background: #fff5f5; }
 
+/* 返回按钮 */
+.back-arrow { display:inline-flex;align-items:center;gap:2px;font-size:12px;color:var(--accent);cursor:pointer;padding:4px 6px;border-radius:4px;transition:background 0.1s;user-select:none; }
+.back-arrow:hover { background:rgba(0,122,255,0.08); }
+
+/* 模型多选列表 */
+.model-check-list { display:flex; flex-direction:column; gap:2px; max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; }
+.model-check-row { display:flex; align-items:center; gap:10px; padding:8px 12px; cursor:pointer; transition:background 0.1s; }
+.model-check-row:hover { background:rgba(0,122,255,0.04); }
+.model-check-row input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); flex-shrink:0; cursor:pointer; }
+.model-check-row .model-info { flex:1; display:flex; flex-direction:column; gap:1px; min-width:0; }
+.model-check-row .model-label { font-size:13px; font-weight:500; }
+.model-check-row .model-meta { font-size:11px; color:var(--text-tertiary); }
+.model-check-row .model-stats { font-size:11px; color:var(--text-tertiary); white-space:nowrap; flex-shrink:0; }
+
 /* ========== 聊天栏 ========== */
 #chat-column {
   width: var(--chat-width); min-width: 280px;
   background: #f9f9fc; border-left: 1px solid var(--border);
   display: flex; flex-direction: column; position: relative;
 }
-#chat-column.collapsed { width: 0; min-width: 0; overflow: hidden; border: none; }
+#chat-column.collapsed { flex: 0 0 0; width: 0; min-width: 0; max-width: 0; overflow: hidden; border: none; }
 .chat-resize-handle { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 5; }
 .chat-resize-handle:hover, .chat-resize-handle:active { background: rgba(0,122,255,0.2); }
+.chat-sessions { display:flex; overflow-x:auto; padding:5px 16px; gap:4px; border-bottom:1px solid var(--border); background:#f2f2f7; align-items:center; }
+.chat-sessions::-webkit-scrollbar { height:0; }
+.chat-session-tab { display:flex; align-items:center; gap:4px; padding:4px 10px; font-size:11px; border-radius:6px; cursor:pointer; white-space:nowrap; background:transparent; color:var(--text-secondary); transition:all 0.1s; }
+.chat-session-tab:hover { background:rgba(0,0,0,0.05); }
+.chat-session-tab.active { background:#fff; color:var(--text); font-weight:500; box-shadow:0 1px 2px rgba(0,0,0,0.06); }
+.chat-session-tab .cs-close { width:14px;height:14px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:10px;opacity:0;transition:opacity 0.1s; }
+.chat-session-tab:hover .cs-close { opacity:0.4; }
+.chat-session-tab .cs-close:hover { opacity:1;background:rgba(0,0,0,0.1); }
+.chat-new-btn { flex-shrink:0; width:24px; height:24px; border-radius:6px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:16px; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; line-height:1; padding:0; }
+.chat-new-btn:hover { background:#f0f0f5; color:var(--text); }
+.chat-context-bar { display:flex; align-items:center; gap:6px; padding:6px 16px; border-bottom:1px solid var(--border); background:#fff; overflow-x:auto; }
+.chat-context-bar::-webkit-scrollbar { height:0; }
+.chat-context-tags { display:flex; gap:4px; flex-wrap:nowrap; }
+.chat-ctx-tag { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; font-size:10px; border-radius:4px; background:#f2f2f7; color:var(--text-secondary); white-space:nowrap; }
+.chat-ctx-tag .ctx-remove { cursor:pointer; font-size:12px; opacity:0.5; }
+.chat-ctx-tag .ctx-remove:hover { opacity:1; color:#ff3b30; }
 .chat-header {
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px;
 }
-.chat-header select { font-size: 12px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-family: var(--font); color: var(--text); cursor: pointer; max-width: 140px; }
+.chat-header select { font-size: 12px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-family: var(--font); color: var(--text); cursor: pointer; flex-shrink: 1; min-width: 0; }
+#chat-model-select { width: 100px; }
+#chat-prompt-select { width: 110px; }
 #chat-toggle { margin-left: auto; width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 13px; color: var(--text-tertiary); display: flex; align-items: center; justify-content: center; }
 #chat-toggle:hover { background: #f0f0f5; color: var(--text); }
 .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -956,7 +1180,11 @@ body {
       <button class="module-btn" data-module="mcp" title="MCP管理">
         <span class="mb-icon">🔌</span><span class="mb-label">MCP</span>
       </button>
+      <button class="module-btn" data-module="prompt" title="系统提示词">
+        <span class="mb-icon">📝</span><span class="mb-label">提示词</span>
+      </button>
       <button id="nav-toggle" title="折叠导航栏">◀</button>
+      <div class="module-nav-resize-handle" id="nav-resizer"></div>
     </nav>
 
     <!-- ===== 列 2：中间内容区 ===== -->
@@ -966,9 +1194,10 @@ body {
       <div id="file-module" class="module-content active">
         <!-- 侧边栏 -->
         <aside id="sidebar">
+          <div class="sidebar-resize-handle" id="sidebar-resizer"></div>
           <div class="drop-hint">📂 松手添加文件夹</div>
           <div class="sidebar-top">
-            <h1><span class="dot"></span>拾元文件夹</h1>
+            <h1>PartnerFM</h1>
             <div class="search-wrap">
               <span class="search-icon">🔍</span>
               <input type="text" id="search-input" placeholder="搜索文件...">
@@ -977,7 +1206,6 @@ body {
           <div id="folder-list"></div>
           <div class="sidebar-bottom">
             <button id="add-folder-btn" class="primary">📂 添加文件夹</button>
-            <button id="new-file-btn">📄 新建文件</button>
             <button id="refresh-btn">🔄 刷新</button>
           </div>
         </aside>
@@ -987,12 +1215,13 @@ body {
           <div id="content-area">
             <div id="welcome-page">
               <div class="welcome-icon">🗂️</div>
-              <h2>拾元文件夹</h2>
+              <h2>PartnerFM</h2>
               <p>点击「添加文件夹」选择单个文件夹，或从访达拖入多个文件夹</p>
               <div class="shortcuts">
                 <div><kbd>⌘P</kbd> 快速搜索文件</div>
                 <div><kbd>⌘W</kbd> 关闭当前标签</div>
                 <div><kbd>⌘⇧T</kbd> 恢复关闭的标签</div>
+                <div><kbd>⌘⇧F</kbd> 全屏展示</div>
                 <div style="margin-top:4px">从访达拖入文件夹可一次添加多个</div>
                 <div>右键文件夹或文件进行操作</div>
               </div>
@@ -1000,7 +1229,10 @@ body {
           </div>
           <div id="status-bar">
             <span id="status-left">就绪</span>
-            <span id="status-right"></span>
+            <span style="display:flex;align-items:center;gap:8px;">
+              <button id="fullscreen-btn" title="全屏展示 (⌘⇧F)">⛶</button>
+              <span id="status-right"></span>
+            </span>
           </div>
         </div>
       </div>
@@ -1011,7 +1243,6 @@ body {
           <h2>🤖 模型管理</h2>
           <p style="color:var(--text-secondary);margin-bottom:20px">配置大模型 API Key，在右侧聊天窗口中选择使用。</p>
           <div id="model-list"></div>
-          <button class="add-model-btn" onclick="showAddModelForm()">+ 添加模型</button>
         </div>
       </div>
 
@@ -1033,15 +1264,36 @@ body {
         </div>
       </div>
 
+      <!-- 提示词模块 -->
+      <div id="prompt-module" class="module-content">
+        <div class="mgmt-panel">
+          <h2>系统提示词</h2>
+          <p style="color:var(--text-secondary);margin-bottom:20px">管理聊天中的系统提示词模板，在右侧对话中选择使用。</p>
+          <button class="prompt-add-btn" onclick="openPromptModal()">＋ 新增提示词</button>
+          <div id="prompt-list"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ===== 列 3：聊天窗口 ===== -->
     <div id="chat-column">
       <div class="chat-resize-handle" id="chat-resizer"></div>
+      <div class="chat-sessions" id="chat-sessions"></div>
       <div class="chat-header">
-        💬 对话
-        <select id="chat-model-select"><option value="">未选择模型</option></select>
+        <select id="chat-model-select" onchange="onChatModelChange()"><option value="">选择模型</option></select>
+        <select id="chat-prompt-select" onchange="onChatPromptChange()"><option value="">选择模板</option></select>
+        <input id="chat-workspace-input" placeholder="工作区路径" onchange="saveWorkspace()" style="flex:1;min-width:0;padding:3px 6px;font-size:10px;border:1px solid var(--border);border-radius:4px;outline:none;font-family:var(--font-mono);color:var(--text-tertiary);background:transparent">
         <button id="chat-toggle" title="折叠聊天栏">▶</button>
+      </div>
+      <div id="chat-custom-prompt" style="display:none">
+        <textarea id="chat-custom-prompt-input" placeholder="输入自定义系统提示..."
+          oninput="onCustomPromptInput()"
+          style="width:100%;padding:6px 16px;font-size:12px;border:none;border-bottom:1px solid var(--border);resize:none;font-family:var(--font);outline:none;min-height:38px;max-height:80px;background:#fffbe6;box-sizing:border-box;"></textarea>
+      </div>
+      <div class="chat-context-bar" id="chat-context-bar" style="display:none">
+        <span style="font-size:11px;color:var(--text-tertiary);flex-shrink:0">上下文：</span>
+        <div class="chat-context-tags" id="chat-context-tags"></div>
       </div>
       <div class="chat-messages" id="chat-messages">
         <div class="chat-empty"><div class="ce-icon">💬</div>选择模型后开始对话</div>
@@ -1051,6 +1303,9 @@ body {
         <button id="chat-send" onclick="sendChat()">发送</button>
       </div>
     </div>
+    <!-- 折叠恢复按钮 -->
+    <div id="nav-restore" onclick="toggleNav()" title="展开导航栏">▶</div>
+    <div id="chat-restore" onclick="toggleChat()" title="展开聊天栏">◀</div>
   </div>
 </div>
 
@@ -1091,6 +1346,123 @@ body {
   </div>
 </div>
 
+<!-- Provider 弹窗 -->
+<div id="provider-modal">
+  <div class="pm-box">
+    <div class="pm-header">
+      <h3 id="pm-title">添加 Provider</h3>
+      <button class="pm-close" onclick="closeProviderModal()">✕</button>
+    </div>
+    <div class="pm-body">
+      <div class="pm-field">
+        <label class="pm-label">Provider 类型</label>
+        <div class="pm-type-toggle">
+          <button class="pm-type-opt active" onclick="switchProviderType('preset')" id="pm-type-preset">预设</button>
+          <button class="pm-type-opt" onclick="switchProviderType('custom')" id="pm-type-custom">自定义</button>
+        </div>
+      </div>
+      <div id="pm-preset-fields">
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>选择 Provider</label>
+          <select id="pm-preset-select" onchange="onPresetSelect()">
+            <option value="">选择一个 provider...</option>
+          </select>
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>Base URL</label>
+          <input id="pm-preset-url" placeholder="例如 https://api.example.com/v1" readonly>
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>API Key</label>
+          <div class="api-key-wrap">
+            <input id="pm-preset-key" type="password" placeholder="sk-...">
+            <button class="toggle-key" onclick="toggleKey(this,'pm-preset-key')">👁️</button>
+          </div>
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>默认模型</label>
+          <div class="pm-fetch-row">
+            <select id="pm-preset-model"><option value="">先获取模型列表...</option></select>
+            <button class="pm-fetch-btn" id="pm-preset-fetch" onclick="fetchPresetModels()">获取</button>
+          </div>
+          <div class="pm-fetch-status" id="pm-preset-status"></div>
+        </div>
+      </div>
+      <div id="pm-custom-fields" style="display:none">
+        <div class="pm-field">
+          <label class="pm-label">名称<span style="color:var(--text-tertiary);font-weight:400">（非必填）</span></label>
+          <input id="pm-cust-name" placeholder="根据 Base URL 自动生成">
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>Base URL</label>
+          <input id="pm-cust-url" placeholder="例如 https://api.example.com/v1">
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>API Key</label>
+          <div class="api-key-wrap">
+            <input id="pm-cust-key" type="password" placeholder="sk-...">
+            <button class="toggle-key" onclick="toggleKey(this,'pm-cust-key')">👁️</button>
+          </div>
+        </div>
+        <div class="pm-field">
+          <label class="pm-label"><span class="pm-required">*</span>默认模型</label>
+          <div class="pm-fetch-row">
+            <select id="pm-cust-model"><option value="">先获取模型列表...</option></select>
+            <button class="pm-fetch-btn" id="pm-cust-fetch" onclick="fetchCustomModels()">获取</button>
+          </div>
+          <div class="pm-fetch-status" id="pm-cust-status"></div>
+        </div>
+        <div class="pm-field">
+          <label class="pm-label">上下文长度<span style="color:var(--text-tertiary);font-weight:400">（非必填）</span></label>
+          <input id="pm-cust-ctx" placeholder="例如 256000（可选）">
+        </div>
+      </div>
+    </div>
+    <div class="pm-footer" style="padding:0 24px 20px">
+      <button class="pm-btn-cancel" onclick="closeProviderModal()">取消</button>
+      <button class="pm-btn-submit" id="pm-submit-btn" onclick="submitProvider()">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 内联编辑弹窗 -->
+<div id="inline-modal">
+  <div class="im-box">
+    <h4 id="im-title">编辑</h4>
+    <input id="im-input" placeholder="">
+    <div class="im-btns">
+      <button class="im-cancel" onclick="closeInlineModal()">取消</button>
+      <button class="im-confirm" id="im-confirm">确定</button>
+    </div>
+  </div>
+</div>
+
+<div id="prompt-modal">
+  <div class="pm-box">
+    <div class="pm-header">
+      <h3 id="prompt-modal-title">新增提示词</h3>
+      <button class="pm-close" onclick="closePromptModal()">✕</button>
+    </div>
+    <div class="pm-body">
+      <div class="pm-field">
+        <label class="pm-label"><span class="pm-required">*</span>名称</label>
+        <input id="prompt-modal-name" placeholder="如：帮我写代码">
+      </div>
+      <div class="pm-field">
+        <label class="pm-label"><span class="pm-required">*</span>提示词</label>
+        <textarea id="prompt-modal-text" placeholder="输入系统提示词内容..."></textarea>
+      </div>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-btn-cancel" onclick="closePromptModal()">取消</button>
+      <button class="pm-btn-submit" id="prompt-submit-btn" onclick="submitPrompt()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 // ========== 数据库（IndexedDB 持久化文件夹句柄）==========
 const DB_NAME = 'file-manager-db';
@@ -1110,14 +1482,66 @@ function openDB() {
   });
 }
 
+// localStorage 后备：存储文件夹名称和 ID，IndexedDB 失败时至少能提示用户
+const LS_KEY = 'partnerfm-folders';
+
+function saveToLocalStorage(id, name) {
+  try {
+    const list = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const existing = list.find(f => f.id === id);
+    if (!existing) list.push({ id, name });
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+  } catch (_) {}
+}
+
+function removeFromLocalStorage(id) {
+  try {
+    const list = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    localStorage.setItem(LS_KEY, JSON.stringify(list.filter(f => f.id !== id)));
+  } catch (_) {}
+}
+
+function loadFromLocalStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  } catch (_) { return []; }
+}
+
+const ORDER_KEY = 'partnerfm-folder-order';
+function saveFolderOrder() {
+  localStorage.setItem(ORDER_KEY, JSON.stringify(state.folders.map(f => f.id)));
+}
+function getFolderOrder() {
+  try {
+    return JSON.parse(localStorage.getItem(ORDER_KEY) || '[]');
+  } catch (_) { return []; }
+}
+function applyFolderOrder() {
+  const order = getFolderOrder();
+  if (!order.length) return;
+  state.folders.sort((a, b) => {
+    const ai = order.indexOf(a.id);
+    const bi = order.indexOf(b.id);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;  // 新文件夹放后面
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
 async function saveFolderHandle(id, name, handle) {
+  // 同时存一份到 localStorage（仅元数据）
+  saveToLocalStorage(id, name);
+
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction('folders', 'readwrite');
     const store = tx.objectStore('folders');
-    store.put({ id, name, handle, addedAt: Date.now() });
-    tx.oncomplete = resolve;
-    tx.onerror = reject;
+    const req = store.put({ id, name, handle, addedAt: Date.now() });
+    req.onsuccess = () => console.log('[PartnerFM] 💾 已保存: ' + name);
+    req.onerror = (e) => { console.error('[PartnerFM] ❌ put 失败: ' + name, e.target.error); reject(e.target.error); };
+    tx.oncomplete = () => { console.log('[PartnerFM] 事务完成: ' + name); resolve(); };
+    tx.onerror = (e) => { console.error('[PartnerFM] 事务失败: ' + name, e.target.error); reject(e.target.error); };
   });
 }
 
@@ -1127,20 +1551,35 @@ async function getSavedFolders() {
     const tx = db.transaction('folders', 'readonly');
     const store = tx.objectStore('folders');
     const req = store.getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = reject;
+    req.onsuccess = () => {
+      const result = req.result || [];
+      console.log('[PartnerFM] IndexedDB 读取: ' + result.length + ' 条记录');
+      // 验证 handle 是否有效：反序列化后应该仍是 FileSystemDirectoryHandle
+      for (const r of result) {
+        if (r.handle) {
+          const valid = typeof r.handle.queryPermission === 'function';
+          console.log('[PartnerFM] handle 验证: ' + r.name + ' — ' + (valid ? '有效 ✅' : '无效 ❌ (类型=' + typeof r.handle + ')'));
+          if (!valid) r.handle = null;
+        }
+      }
+      resolve(result);
+    };
+    req.onerror = (e) => { console.error('[PartnerFM] getAll 失败', e.target.error); reject(e.target.error); };
   });
 }
 
 async function removeSavedFolder(id) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction('folders', 'readwrite');
-    const store = tx.objectStore('folders');
-    store.delete(id);
-    tx.oncomplete = resolve;
-    tx.onerror = reject;
-  });
+  removeFromLocalStorage(id);
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('folders', 'readwrite');
+      const store = tx.objectStore('folders');
+      store.delete(id);
+      tx.oncomplete = () => { console.log('[PartnerFM] 🗑️ 已移除: ' + id); resolve(); };
+      tx.onerror = (e) => { console.error('[PartnerFM] 删除失败', e.target.error); reject(e.target.error); };
+    });
+  } catch (_) {}
 }
 
 // ========== 全局状态 ==========
@@ -1153,34 +1592,45 @@ const state = {
   expandedNodes: new Set(), // 树中展开的子文件夹 handle
 };
 
-// ========== DOM 引用 ==========
+// ========== DOM 引用（声明式映射 + 启动校验，防漏加属性）==========
 const $ = (s) => document.querySelector(s);
-const dom = {
-  searchInput: $('#search-input'),
-  folderList: $('#folder-list'),
-  addFolderBtn: $('#add-folder-btn'),
-  newFileBtn: $('#new-file-btn'),
-  refreshBtn: $('#refresh-btn'),
-  tabBar: $('#tab-bar'),
-  contentArea: $('#content-area'),
-  welcomePage: $('#welcome-page'),
-  statusLeft: $('#status-left'),
-  statusRight: $('#status-right'),
-  quickOverlay: $('#quick-overlay'),
-  quickInput: $('#quick-input'),
-  quickResults: $('#quick-results'),
-  contextMenu: $('#context-menu'),
-  modalOverlay: $('#modal-overlay'),
-  modalTitle: $('#modal-title'),
-  modalInput: $('#modal-input'),
-  modalCancel: $('#modal-cancel'),
-  modalConfirm: $('#modal-confirm'),
-  modalTypeField: $('#modal-type-field'),
-  modalTypeSelect: $('#modal-type-select'),
-  modalLocationField: $('#modal-location-field'),
-  modalLocationText: $('#modal-location-text'),
-  modalLocationBtn: $('#modal-location-btn'),
+
+const DOM_SELECTORS = {
+  sidebar:            '#sidebar',
+  folderList:         '#folder-list',
+  searchInput:        '#search-input',
+  addFolderBtn:       '#add-folder-btn',
+  newFileBtn:         '#new-file-btn',
+  refreshBtn:         '#refresh-btn',
+  tabBar:             '#tab-bar',
+  contentArea:        '#content-area',
+  welcomePage:        '#welcome-page',
+  statusLeft:         '#status-left',
+  statusRight:        '#status-right',
+  quickOverlay:       '#quick-overlay',
+  quickInput:         '#quick-input',
+  quickResults:       '#quick-results',
+  chatCustomPrompt:       '#chat-custom-prompt',
+  chatCustomPromptInput:  '#chat-custom-prompt-input',
+  chatPromptSelect:       '#chat-prompt-select',
+  contextMenu:            '#context-menu',
+  modalOverlay:       '#modal-overlay',
+  modalTitle:         '#modal-title',
+  modalInput:         '#modal-input',
+  modalCancel:        '#modal-cancel',
+  modalConfirm:       '#modal-confirm',
+  modalTypeField:     '#modal-type-field',
+  modalTypeSelect:    '#modal-type-select',
+  modalLocationField: '#modal-location-field',
+  modalLocationText:  '#modal-location-text',
+  modalLocationBtn:   '#modal-location-btn',
 };
+
+const dom = {};
+for (const [key, sel] of Object.entries(DOM_SELECTORS)) {
+  dom[key] = document.querySelector(sel);
+  if (!dom[key]) console.warn('[PartnerFM] ⚠️ DOM 缺失: ' + key + ' ← ' + sel);
+}
 
 // ========== 工具函数 ==========
 function getFileIcon(name) {
@@ -1259,6 +1709,7 @@ async function addFolder() {
     const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     const folder = { id, name: handle.name, handle, children: [], expanded: true };
     state.folders.push(folder);
+    saveFolderOrder();
     await loadFolderChildren(folder);
     await saveFolderHandle(id, handle.name, handle);
     refreshAllFiles();
@@ -1310,6 +1761,49 @@ async function handleDrop(e) {
   }
 }
 
+// ========== 子节点自定义排序持久化 ==========
+const CHILD_ORDER_KEY = 'partnerfm-child-orders';
+
+function loadChildOrders() {
+  try { return JSON.parse(localStorage.getItem(CHILD_ORDER_KEY) || '{}'); }
+  catch (_) { return {}; }
+}
+
+function getChildOrderKey(folder, parentNode) {
+  // key 格式：folderId（根层）或 folderId/ancestor1/ancestor2/parent
+  if (!parentNode) return folder.id;
+  if (parentNode.handle === folder.handle) return folder.id; // 根层直接返回
+  const names = [];
+  let cur = parentNode;
+  while (cur) {
+    names.push(cur.name);
+    if (cur.handle === folder.handle) break;
+    cur = findNodeParent(folder.children, cur.handle);
+  }
+  return folder.id + '/' + names.reverse().join('/');
+}
+
+function saveChildOrder(folder, parentNode, children) {
+  const orders = loadChildOrders();
+  orders[getChildOrderKey(folder, parentNode)] = children.map(c => c.name);
+  localStorage.setItem(CHILD_ORDER_KEY, JSON.stringify(orders));
+}
+
+function applyChildOrder(folder, parentNode, children) {
+  const orders = loadChildOrders();
+  const key = getChildOrderKey(folder, parentNode);
+  const order = orders[key];
+  if (!order || !order.length) return;
+  children.sort((a, b) => {
+    const ai = order.indexOf(a.name);
+    const bi = order.indexOf(b.name);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
 async function loadFolderChildren(folder, maxDepth = 3) {
   const load = async (handle, arr, depth) => {
     if (depth >= maxDepth) return;
@@ -1345,14 +1839,36 @@ async function loadFolderChildren(folder, maxDepth = 3) {
 
   folder.children = [];
   await load(folder.handle, folder.children, 0);
+  applyChildOrder(folder, null, folder.children);
 }
 
 async function refreshFolder(folder) {
-  // 重新加载文件夹，保持顶层展开状态
+  // 保存子目录展开状态（按路径名匹配，因刷新后 handle 引用会变）
+  const expandedPaths = new Set();
+  function collectPaths(nodes, prefix) {
+    for (const node of nodes) {
+      const p = prefix + '/' + node.name;
+      if (state.expandedNodes.has(node.handle)) expandedPaths.add(p);
+      if (node.children && node.children.length > 0) collectPaths(node.children, p);
+    }
+  }
+  collectPaths(folder.children, folder.name);
+
   const wasExpanded = folder.expanded;
   folder.children = [];
   await loadFolderChildren(folder);
   folder.expanded = wasExpanded;
+
+  // 恢复展开状态
+  function restorePaths(nodes, prefix) {
+    for (const node of nodes) {
+      const p = prefix + '/' + node.name;
+      if (expandedPaths.has(p)) state.expandedNodes.add(node.handle);
+      if (node.children && node.children.length > 0) restorePaths(node.children, p);
+    }
+  }
+  restorePaths(folder.children, folder.name);
+
   refreshAllFiles();
   renderAll();
 }
@@ -1488,7 +2004,7 @@ dom.modalLocationBtn.addEventListener('click', async () => {
 
 // 确认按钮（创建文件模式）
 dom.modalConfirm.addEventListener('click', async () => {
-  if (modalMode === 'create-file') {
+  if (modalMode === 'create-file' && createFileResolve) {
     const name = dom.modalInput.value.trim();
     if (!name) return;
 
@@ -1549,7 +2065,7 @@ async function doCreateFile(result) {
     // 1. 检查顶层文件夹
     for (const folder of state.folders) {
       if (folder.handle === targetHandle) {
-        insertChildSorted(folder.children, result.fileName, fileHandle, 'file', 0);
+        insertChildSorted(folder.children, result.fileName, fileHandle, 'file', 0, folder, null);
         inserted = true;
         break;
       }
@@ -1577,21 +2093,21 @@ async function doCreateFile(result) {
   }
 }
 
-function insertIntoTreeNode(nodes, targetHandle, fileName, fileHandle) {
+function insertIntoTreeNode(nodes, targetHandle, fileName, fileHandle, kind = 'file') {
   for (const node of nodes) {
     if (node.handle === targetHandle) {
       if (!node.children) node.children = [];
-      insertChildSorted(node.children, fileName, fileHandle, 'file', node.depth + 1);
+      insertChildSorted(node.children, fileName, fileHandle, kind, node.depth + 1, findFolderForHandle(node.handle), node);
       return true;
     }
     if (node.children && node.children.length > 0) {
-      if (insertIntoTreeNode(node.children, targetHandle, fileName, fileHandle)) return true;
+      if (insertIntoTreeNode(node.children, targetHandle, fileName, fileHandle, kind)) return true;
     }
   }
   return false;
 }
 
-function insertChildSorted(children, name, handle, kind, depth) {
+function insertChildSorted(children, name, handle, kind, depth, folder, parentNode) {
   const node = {
     name,
     handle,
@@ -1607,6 +2123,7 @@ function insertChildSorted(children, name, handle, kind, depth) {
     if (aDir !== bDir) return aDir ? -1 : 1;
     return a.name.localeCompare(b.name, 'zh-CN');
   });
+  if (folder) applyChildOrder(folder, parentNode || null, children);
 }
 
 async function createFolder(parentHandle, parentFolder) {
@@ -1614,20 +2131,28 @@ async function createFolder(parentHandle, parentFolder) {
   if (!name) return;
   try {
     const dirHandle = await parentHandle.getDirectoryHandle(name, { create: true });
-    // 直接在树中插入新文件夹节点，不刷新
-    if (!insertIntoTreeNode(state.folders, parentHandle, name, dirHandle)) {
-      for (const folder of state.folders) {
-        if (folder.handle === parentHandle) {
-          insertChildSorted(folder.children, name, dirHandle, 'directory', 0);
-          break;
-        }
-      }
-    }
+    // 在树中找到 parentHandle 对应节点并插入
+    insertIntoTreeNodes(state.folders, parentHandle, name, dirHandle, 'directory');
     refreshAllFiles();
     renderAll();
   } catch (err) {
     alert('创建文件夹失败：' + err.message);
   }
+}
+
+// 递归搜索树并插入节点（handle 可能用 isSameEntry 更准确，这里做多层兜底）
+function insertIntoTreeNodes(nodes, targetHandle, name, handle, kind) {
+  for (const node of nodes) {
+    if (node.handle === targetHandle || (node.children !== undefined && node.handle && targetHandle && node.handle.name === targetHandle.name)) {
+      if (!node.children) node.children = [];
+      insertChildSorted(node.children, name, handle, kind, node.depth + 1, findFolderForHandle(node.handle), node);
+      return true;
+    }
+    if (node.children && node.children.length > 0) {
+      if (insertIntoTreeNodes(node.children, targetHandle, name, handle, kind)) return true;
+    }
+  }
+  return false;
 }
 
 async function renameEntry(handle, parentFolder, currentName) {
@@ -1637,20 +2162,99 @@ async function renameEntry(handle, parentFolder, currentName) {
     if (typeof handle.move === 'function') {
       await handle.move(newName);
     } else {
-      alert('当前浏览器不支持重命名操作，请在访达中手动重命名');
-      return;
+      // 降级方案：复制 + 删除
+      await renameFallback(handle, newName);
     }
-    // 直接在树中更新名称
     renameInTree(state.folders, handle, newName);
-    // 更新已打开标签
     for (const tab of state.openTabs) {
-      if (tab.handle === handle) { tab.name = newName; tab.icon = getFileIcon(newName); }
+      if (isSameHandle(tab.handle, handle)) { tab.name = newName; tab.icon = getFileIcon(newName); }
     }
     refreshAllFiles();
     renderAll();
   } catch (err) {
     alert('重命名失败：' + err.message);
   }
+}
+
+// 重命名降级方案：没有 handle.move 时，用复制+删除实现
+async function renameFallback(handle, newName) {
+  const parentNode = findParentInAllFolders(handle);
+  if (!parentNode || parentNode.kind !== 'directory') {
+    throw new Error('无法定位父文件夹（顶层文件夹暂不支持降级重命名）');
+  }
+  const parentHandle = parentNode.handle;
+
+  if (handle.kind === 'directory') {
+    // 目录：创建新目录 → 递归复制 → 递归删除旧目录
+    const newHandle = await parentHandle.getDirectoryHandle(newName, { create: true });
+    await copyDirContents(handle, newHandle);
+    await removeDirRecursive(handle);
+  } else {
+    // 文件：读内容 → 创建新文件 → 写内容 → 删除旧文件
+    const file = await handle.getFile();
+    const content = await file.arrayBuffer();
+    const newHandle = await parentHandle.getFileHandle(newName, { create: true });
+    const writable = await newHandle.createWritable();
+    await writable.write(content);
+    await writable.close();
+    if (typeof handle.remove === 'function') await handle.remove();
+  }
+}
+
+// 递归复制目录内容
+async function copyDirContents(srcHandle, dstHandle) {
+  for await (const [name, entry] of srcHandle.entries()) {
+    if (name.startsWith('.') || name.startsWith('~')) continue;
+    if (entry.kind === 'directory') {
+      const subDir = await dstHandle.getDirectoryHandle(name, { create: true });
+      await copyDirContents(entry, subDir);
+    } else {
+      const file = await entry.getFile();
+      const content = await file.arrayBuffer();
+      const newFile = await dstHandle.getFileHandle(name, { create: true });
+      const writable = await newFile.createWritable();
+      await writable.write(content);
+      await writable.close();
+    }
+  }
+}
+
+// 递归删除目录（先删子内容，再删自身）
+async function removeDirRecursive(dirHandle) {
+  for await (const [name, entry] of dirHandle.entries()) {
+    if (name.startsWith('.') || name.startsWith('~')) continue;
+    if (entry.kind === 'directory') {
+      await removeDirRecursive(entry);
+    } else {
+      if (typeof entry.remove === 'function') await entry.remove();
+    }
+  }
+  if (typeof dirHandle.remove === 'function') await dirHandle.remove();
+}
+
+// 在所有已添加文件夹中查找节点的直接父节点
+function findParentInAllFolders(handle) {
+  for (const folder of state.folders) {
+    if (folder.handle === handle) return null; // 顶层文件夹本身
+    if (folder.children) {
+      const parent = findNodeParentInTree(folder.children, handle);
+      if (parent) return parent;
+    }
+  }
+  return null;
+}
+
+function findNodeParentInTree(nodes, targetHandle) {
+  for (const node of nodes) {
+    if (node.children) {
+      for (const child of node.children) {
+        if (child.handle === targetHandle) return node;
+      }
+      const found = findNodeParentInTree(node.children, targetHandle);
+      if (found) return found;
+    }
+  }
+  return null;
 }
 
 function renameInTree(nodes, targetHandle, newName) {
@@ -1755,15 +2359,21 @@ function showContextMenu(x, y, node, parentFolder) {
   const items = [];
 
   if (isDir) {
-    // 使用 node 本身作为目标位置（handle 用于创建，name 用于显示）
     const target = { handle: node.handle, name: node.name };
-    items.push({ label: '📄 新建文件', cls: '', action: () => createFileInLocation(target) });
-    items.push({ label: '📁 新建文件夹', cls: '', action: () => createFolder(node.handle, parentFolder) });
+    items.push({ label: '新建文件', cls: '', action: () => createFileInLocation(target) });
+    items.push({ label: '新建文件夹', cls: '', action: () => createFolder(node.handle, parentFolder) });
     items.push({ sep: true });
   }
-  items.push({ label: '✏️ 重命名', cls: '', action: () => renameEntry(node.handle, parentFolder, node.name) });
+  items.push({ label: '复制', cls: '', action: () => copyEntry(node.handle, node.name, node.kind) });
+  if (isDir && clipboard) {
+    items.push({ label: '粘贴', cls: '', action: () => pasteEntry(node.handle, parentFolder) });
+  }
   items.push({ sep: true });
-  items.push({ label: '🗑️ 删除', cls: 'danger', action: () => deleteEntry(node.handle, parentFolder, node.name) });
+  items.push({ label: '添加到对话', cls: '', action: () => addToChatContext(node.handle, node.name) });
+  items.push({ sep: true });
+  items.push({ label: '重命名', cls: '', action: () => renameEntry(node.handle, parentFolder, node.name) });
+  items.push({ sep: true });
+  items.push({ label: '删除', cls: 'danger', action: () => deleteEntry(node.handle, parentFolder, node.name) });
 
   for (const item of items) {
     if (item.sep) {
@@ -1918,23 +2528,59 @@ function renderFolderList() {
       showContextMenu(e.clientX, e.clientY, fakeNode, folder);
     });
 
-    // 拖拽到顶层文件夹根目录
+    // 拖拽文件夹排序
+    header.draggable = true;
+    const folderIndex = state.folders.indexOf(folder);
+    header.addEventListener('dragstart', (e) => {
+      dragData = { reorder: true, folder, folderIndex };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', folder.name);
+    });
+    header.addEventListener('dragend', () => {
+      dragData = null;
+      document.querySelectorAll('.folder-header').forEach(h => h.style.borderTop = '');
+    });
+
+    // 拖拽悬停：排序模式 或 移入模式
     header.addEventListener('dragover', (e) => {
       if (!dragData) return;
-      if (dragData.node.handle === folder.handle) return;
-      if (dragData.node.kind === 'directory' && isDescendant(dragData.node, folder.handle)) return;
       e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      header.style.background = 'rgba(0,122,255,0.1)';
+      if (dragData.reorder) {
+        // 排序模式：显示插入线
+        if (dragData.folder === folder) return;
+        e.dataTransfer.dropEffect = 'move';
+        header.style.borderTop = '2px solid var(--accent)';
+      } else {
+        // 移入模式：高亮文件夹
+        if (dragData.node.handle === folder.handle) return;
+        if (dragData.node.kind === 'directory' && isDescendant(dragData.node, folder.handle)) return;
+        e.dataTransfer.dropEffect = 'move';
+        header.style.background = 'rgba(0,122,255,0.1)';
+      }
     });
-    header.addEventListener('dragleave', () => {
+    header.addEventListener('dragleave', (e) => {
       header.style.background = '';
+      header.style.borderTop = '';
     });
     header.addEventListener('drop', async (e) => {
       e.preventDefault();
       header.style.background = '';
+      header.style.borderTop = '';
       if (!dragData) return;
-      await moveEntry(dragData.node.handle, folder.handle, dragData.sourceFolder, folder);
+      if (dragData.reorder) {
+        // 排序：移动 state.folders 中的位置
+        if (dragData.folder === folder) return;
+        const fromIdx = state.folders.indexOf(dragData.folder);
+        const toIdx = state.folders.indexOf(folder);
+        if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
+          state.folders.splice(fromIdx, 1);
+          state.folders.splice(toIdx, 0, dragData.folder);
+          saveFolderOrder();
+          renderFolderList();
+        }
+      } else {
+        await moveEntry(dragData.node.handle, folder.handle, dragData.sourceFolder, folder);
+      }
       dragData = null;
     });
 
@@ -1970,6 +2616,8 @@ async function loadNodeChildren(node) {
       children: entry.kind === 'directory' ? [] : null,
     });
   }
+  const _folder = findFolderForHandle(node.handle);
+  if (_folder) applyChildOrder(_folder, node, node.children);
 }
 
 function renderTreeNodes(nodes, container, filter) {
@@ -1982,7 +2630,7 @@ function renderTreeNodes(nodes, container, filter) {
 
     const isDir = node.kind === 'directory';
     const isExpanded = isDir && state.expandedNodes.has(node.handle);
-    const isActive = state.openTabs.some(t => t.handle === node.handle && t.id === state.activeTabId);
+    const isActive = state.openTabs.some(t => isSameHandle(t.handle, node.handle) && t.id === state.activeTabId);
 
     // 包装容器（目录的子节点会放到这里面）
     const wrapper = document.createElement('div');
@@ -2065,36 +2713,79 @@ function renderTreeNodes(nodes, container, filter) {
       dragData = { node, sourceFolder: findFolderForHandle(node.handle) };
       item.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', node.name);
     });
     item.addEventListener('dragend', () => {
       dragData = null;
       item.classList.remove('dragging');
-      // 清除所有 drop-target
-      document.querySelectorAll('.tree-item.drop-target').forEach(el => el.classList.remove('drop-target'));
+      document.querySelectorAll('.tree-item.drop-target,.tree-item.drop-above,.tree-item.drop-below').forEach(el => {
+        el.classList.remove('drop-target', 'drop-above', 'drop-below');
+      });
     });
 
-    // 拖拽悬停：仅文件夹可接受
+    // 拖拽悬停：上/下插入线，中间移入目录
     item.addEventListener('dragover', (e) => {
-      if (!isDir || !dragData) return;
-      if (dragData.node.handle === node.handle) return; // 不能拖到自己
-      if (dragData.node.kind === 'directory' && isDescendant(dragData.node, node.handle)) return; // 不能拖到子目录
+      if (!dragData) return;
+      if (dragData.node.handle === node.handle) return;
+      if (dragData.node.kind === 'directory' && isDescendant(dragData.node, node.handle)) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
-      item.classList.add('drop-target');
+
+      item.classList.remove('drop-target', 'drop-above', 'drop-below');
+
+      const rect = item.getBoundingClientRect();
+      const pct = (e.clientY - rect.top) / rect.height;
+
+      if (isDir && pct > 0.3 && pct < 0.7) {
+        item.classList.add('drop-target');
+      } else if (pct <= 0.5) {
+        item.classList.add('drop-above');
+      } else {
+        item.classList.add('drop-below');
+      }
     });
     item.addEventListener('dragleave', () => {
-      item.classList.remove('drop-target');
+      item.classList.remove('drop-target', 'drop-above', 'drop-below');
     });
 
-    // 放下：执行移动
+    // 放下：插入排序 或 移入目录
     item.addEventListener('drop', async (e) => {
       e.preventDefault();
       e.stopPropagation();
-      item.classList.remove('drop-target');
-      if (!isDir || !dragData) return;
-      if (dragData.node.handle === node.handle) return;
-      const targetFolder = findFolderForHandle(node.handle);
-      await moveEntry(dragData.node.handle, node.handle, dragData.sourceFolder, targetFolder);
+      item.classList.remove('drop-target', 'drop-above', 'drop-below');
+      if (!dragData) return;
+      if (dragData.node.handle === node.handle) { dragData = null; return; }
+
+      const rect = item.getBoundingClientRect();
+      const pct = (e.clientY - rect.top) / rect.height;
+
+      if (isDir && pct > 0.25 && pct < 0.75) {
+        // 移入目录
+        const targetFolder = findFolderForHandle(node.handle);
+        await moveEntry(dragData.node.handle, node.handle, dragData.sourceFolder, targetFolder);
+        dragData = null;
+        return;
+      }
+
+      // 同级排序
+      const sourceParent = findNodeParentOf(dragData.node);
+      const targetParent = findNodeParentOf(node);
+      if (sourceParent && targetParent && sourceParent.handle === targetParent.handle) {
+        const siblings = sourceParent.children;
+        const fromIdx = siblings.findIndex(c => c.handle === dragData.node.handle);
+        let toIdx = siblings.findIndex(c => c.handle === node.handle);
+        if (toIdx === -1) { dragData = null; return; }
+        if (pct > 0.5) toIdx++; // 插入到目标后面
+        if (fromIdx >= 0 && fromIdx < toIdx) toIdx--;
+        if (fromIdx !== toIdx) {
+          const [moved] = siblings.splice(fromIdx, 1);
+          siblings.splice(toIdx, 0, moved);
+          const folder = findFolderForHandle(node.handle);
+          saveChildOrder(folder, sourceParent, siblings);
+          refreshAllFiles();
+          renderAll();
+        }
+      }
       dragData = null;
     });
 
@@ -2119,7 +2810,7 @@ function hasFilterMatch(node, filter) {
 
 function hasChildHandle(children, targetHandle) {
   for (const node of children) {
-    if (node.handle === targetHandle) return true;
+    if (isSameHandle(node.handle, targetHandle)) return true;
     if (node.children && hasChildHandle(node.children, targetHandle)) return true;
   }
   return false;
@@ -2130,13 +2821,103 @@ function isDescendant(node, targetHandle) {
   return hasChildHandle(node.children, targetHandle);
 }
 
+// ========== 剪贴板（复制/粘贴）==========
+let clipboard = null; // { handle, name, kind, content? }
+
+async function copyEntry(handle, name, kind) {
+  if (kind === 'file') {
+    try {
+      const file = await handle.getFile();
+      clipboard = { handle, name, kind, content: await file.arrayBuffer() };
+    } catch (e) {
+      alert('复制失败：' + e.message);
+    }
+  } else {
+    clipboard = { handle, name, kind };
+  }
+}
+
+async function pasteEntry(targetDirHandle, targetFolder) {
+  if (!clipboard) return false;
+  try {
+    const newName = await getAvailableName(targetDirHandle, clipboard.name, clipboard.kind);
+    if (clipboard.kind === 'file') {
+      const newHandle = await targetDirHandle.getFileHandle(newName, { create: true });
+      const writable = await newHandle.createWritable();
+      await writable.write(clipboard.content);
+      await writable.close();
+    } else {
+      const newDir = await targetDirHandle.getDirectoryHandle(newName, { create: true });
+      await copyDirectoryContents(clipboard.handle, newDir);
+    }
+    if (targetFolder) await refreshFolder(targetFolder);
+    refreshAllFiles();
+    renderAll();
+    return true;
+  } catch (e) {
+    alert('粘贴失败：' + e.message);
+    return false;
+  }
+}
+
+async function copyDirectoryContents(sourceHandle, targetHandle) {
+  for await (const [name, entry] of sourceHandle.entries()) {
+    if (name.startsWith('.') || name.startsWith('~')) continue;
+    if (entry.kind === 'file') {
+      const file = await entry.getFile();
+      const newFile = await targetHandle.getFileHandle(name, { create: true });
+      const writable = await newFile.createWritable();
+      await writable.write(await file.arrayBuffer());
+      await writable.close();
+    } else {
+      const newDir = await targetHandle.getDirectoryHandle(name, { create: true });
+      await copyDirectoryContents(entry, newDir);
+    }
+  }
+}
+
+async function getAvailableName(dirHandle, baseName, kind) {
+  // 检查名字是否已存在，如存在则加 "副本" 或递增数字
+  let candidate = baseName;
+  let exists = await entryExists(dirHandle, candidate);
+  if (!exists) return candidate;
+  // 尝试 "xxx 副本"
+  const dotIdx = baseName.lastIndexOf('.');
+  const stem = dotIdx > 0 ? baseName.substring(0, dotIdx) : baseName;
+  const ext = dotIdx > 0 ? baseName.substring(dotIdx) : '';
+  candidate = stem + ' 副本' + ext;
+  exists = await entryExists(dirHandle, candidate);
+  if (!exists) return candidate;
+  // 尝试 "xxx 副本2", "xxx 副本3" ...
+  let n = 2;
+  while (n < 99) {
+    candidate = stem + ' 副本' + n + ext;
+    exists = await entryExists(dirHandle, candidate);
+    if (!exists) return candidate;
+    n++;
+  }
+  return stem + ' 副本' + Date.now() + ext;
+}
+
+async function entryExists(dirHandle, name) {
+  try {
+    await dirHandle.getFileHandle(name);
+    return true;
+  } catch (_) {}
+  try {
+    await dirHandle.getDirectoryHandle(name);
+    return true;
+  } catch (_) {}
+  return false;
+}
+
 // ========== 拖拽移动文件 ==========
 let dragData = null; // { node, sourceFolder }
 
 function findFolderForHandle(handle) {
   // 在 state.folders 中查找包含该 handle 的顶层文件夹
   for (const folder of state.folders) {
-    if (folder.handle === handle) return folder;
+    if (isSameHandle(folder.handle, handle)) return folder;
     if (hasChildHandle(folder.children, handle)) return folder;
   }
   return null;
@@ -2153,6 +2934,29 @@ function findNodeParent(nodes, targetHandle) {
     }
   }
   return null;
+}
+
+function findNodeParentOf(node) {
+  for (const folder of state.folders) {
+    // 先检查是否直接在文件夹根层
+    for (const child of folder.children) {
+      if (child.handle === node.handle) {
+        return { handle: folder.handle, children: folder.children };
+      }
+    }
+    // 再递归搜索子目录
+    const parent = findNodeParent(folder.children, node.handle);
+    if (parent) return parent;
+  }
+  return null;
+}
+
+function isSameHandle(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  // isSameEntry 是异步方法，无法在同步上下文中使用
+  // 降级用 name + kind 匹配（同目录下不允许同名同类型，此匹配可靠）
+  return a.name === b.name && a.kind === b.kind;
 }
 
 async function moveEntry(sourceHandle, targetDirHandle, sourceFolder, targetFolder) {
@@ -2195,7 +2999,7 @@ async function moveEntry(sourceHandle, targetDirHandle, sourceFolder, targetFold
 
 // ========== 标签管理 ==========
 async function openFileInTab(node) {
-  const existing = state.openTabs.find(t => t.handle === node.handle);
+  const existing = state.openTabs.find(t => isSameHandle(t.handle, node.handle));
   if (existing) {
     state.activeTabId = existing.id;
     renderTabs();
@@ -2238,8 +3042,63 @@ async function loadFileContent(tab) {
       tab.content = { type: 'pdf', url: URL.createObjectURL(file), size: file.size };
     } else if (['html','htm'].includes(ext)) {
       tab.content = { type: 'html', text: await file.text(), size: file.size };
-    } else if (['docx','doc','pptx','ppt','xlsx','xls'].includes(ext)) {
-      tab.content = { type: 'office', name: file.name, size: file.size, lastModified: file.lastModified };
+    } else if (['docx','doc'].includes(ext)) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        tab.content = { type: 'docx', html: result.value, name: file.name, size: file.size, lastModified: file.lastModified };
+      } catch (e) {
+        tab.content = { type: 'error', message: '无法解析 Word 文档：' + e.message };
+      }
+    } else if (['xlsx','xls'].includes(ext)) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+        let html = '';
+        workbook.SheetNames.forEach(name => {
+          html += '<h3 class="xlsx-sheet-name">' + escapeHtml(name) + '</h3>';
+          html += XLSX.utils.sheet_to_html(workbook.Sheets[name]);
+        });
+        tab.content = { type: 'xlsx', html, name: file.name, size: file.size, lastModified: file.lastModified };
+      } catch (e) {
+        tab.content = { type: 'error', message: '无法解析 Excel 文档：' + e.message };
+      }
+    } else if (['pptx','ppt'].includes(ext)) {
+      try {
+        // Try server-side conversion to PDF first
+        const arrayBuffer = await file.arrayBuffer();
+        const resp = await fetch(`/api/convert-office?name=${encodeURIComponent(file.name)}`, {
+          method: 'POST', body: arrayBuffer
+        });
+        if (resp.ok) {
+          const pdfBlob = await resp.blob();
+          tab.content = { type: 'pdf', url: URL.createObjectURL(pdfBlob), size: file.size };
+        } else {
+          // Fallback: extract text via JSZip
+          const errData = await resp.json().catch(() => ({}));
+          console.warn('Server conversion failed, falling back to text extraction:', errData.error);
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          const slideFiles = Object.keys(zip.files)
+            .filter(f => f.startsWith('ppt/slides/slide') && f.endsWith('.xml'))
+            .sort((a, b) => {
+              const na = parseInt(a.match(/slide(\d+)/)?.[1] || '0');
+              const nb = parseInt(b.match(/slide(\d+)/)?.[1] || '0');
+              return na - nb;
+            });
+          let html = '';
+          for (let i = 0; i < slideFiles.length; i++) {
+            const xml = await zip.files[slideFiles[i]].async('text');
+            const text = xml.replace(/<[^>]+>/g, ' ').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+            if (text) {
+              html += '<div class="pptx-slide"><div class="pptx-slide-num">第 ' + (i + 1) + ' 页</div><p>' + escapeHtml(text) + '</p></div>';
+            }
+          }
+          if (!html) html = '<p style="color:var(--text-tertiary);text-align:center;padding:40px;">此 PPT 无可提取的文字内容</p><p style="color:var(--text-tertiary);text-align:center;font-size:12px;">安装 LibreOffice 后可将 PPT 转为 PDF 预览：brew install --cask libreoffice</p>';
+          tab.content = { type: 'pptx', html, name: file.name, size: file.size, lastModified: file.lastModified };
+        }
+      } catch (e) {
+        tab.content = { type: 'error', message: '无法解析 PPT 文档：' + e.message };
+      }
     } else if (ext === 'md') {
       tab.content = { type: 'markdown', text: await file.text(), size: file.size };
     } else {
@@ -2427,7 +3286,7 @@ function renderContent(tab) {
       } else if (type === 'html') {
         const iframe = document.createElement('iframe');
         iframe.className = 'html-viewer';
-        iframe.sandbox = 'allow-scripts allow-same-origin';
+        iframe.sandbox = 'allow-scripts';
         iframe.srcdoc = tab.content.text;
         panel.appendChild(iframe);
         // 启动文件监听：外部修改后自动刷新预览
@@ -2453,16 +3312,15 @@ function renderContent(tab) {
     embed.src = tab.content.url;
     embed.type = 'application/pdf';
     panel.appendChild(embed);
-  } else if (type === 'office') {
-    const div = document.createElement('div');
-    div.className = 'office-info';
-    div.innerHTML = `
-      <div class="office-icon">${getFileIcon(tab.content.name)}</div>
-      <div class="office-name">${tab.content.name}</div>
-      <div class="office-meta">${formatSize(tab.content.size)} · ${formatDate(tab.content.lastModified)}</div>
-      <div class="office-hint">Office 文档需要在本地应用中打开</div>
-    `;
-    panel.appendChild(div);
+  } else if (type === 'docx' || type === 'xlsx' || type === 'pptx') {
+    const meta = document.createElement('div');
+    meta.className = 'office-meta-bar';
+    meta.innerHTML = `<span>${getFileIcon(tab.content.name)} ${escapeHtml(tab.content.name)}</span><span>${formatSize(tab.content.size)} · ${formatDate(tab.content.lastModified)}</span>`;
+    panel.appendChild(meta);
+    const v = document.createElement('div');
+    v.className = 'md-viewer office-preview';
+    v.innerHTML = tab.content.html;
+    panel.appendChild(v);
   } else if (type === 'error') {
     const v = document.createElement('div');
     v.className = 'text-viewer';
@@ -2590,6 +3448,7 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   if (e.key === 'Escape') { closeQuickSearch(); closeContextMenu(); }
+  if (mod && e.shiftKey && e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
 });
 
 // 点击其他地方关闭右键菜单
@@ -2608,21 +3467,32 @@ dom.searchInput.addEventListener('input', () => renderFolderList());
 
 // 按钮
 dom.addFolderBtn.addEventListener('click', addFolder);
-dom.newFileBtn.addEventListener('click', () => createFile(null, null));
+if (dom.newFileBtn) dom.newFileBtn.addEventListener('click', () => createFile(null, null));
 dom.refreshBtn.addEventListener('click', async () => {
   for (const folder of state.folders) {
     await refreshFolder(folder);
   }
+  // 刷新后重新加载所有已打开标签页的文件内容
+  for (const tab of state.openTabs) {
+    try { await loadFileContent(tab); } catch (e) { /* 文件可能已被删除 */ }
+  }
+  renderAll();
 });
 
-// 拖拽多个文件夹到侧边栏
+// 拖拽多个文件夹到侧边栏（仅处理从访达拖入的外部文件，内部树拖拽不触发）
 let dragCounter = 0;
+function isExternalDrag(e) {
+  // 外部拖入：dataTransfer 包含 Files 类型，且 dragData 为空（非内部拖拽）
+  return e.dataTransfer.types && e.dataTransfer.types.includes('Files') && !dragData;
+}
 dom.sidebar.addEventListener('dragenter', (e) => {
+  if (!isExternalDrag(e)) return;
   e.preventDefault();
   dragCounter++;
   dom.sidebar.classList.add('drag-over');
 });
-dom.sidebar.addEventListener('dragleave', () => {
+dom.sidebar.addEventListener('dragleave', (e) => {
+  if (!isExternalDrag(e)) return;
   dragCounter--;
   if (dragCounter <= 0) {
     dragCounter = 0;
@@ -2630,9 +3500,11 @@ dom.sidebar.addEventListener('dragleave', () => {
   }
 });
 dom.sidebar.addEventListener('dragover', (e) => {
+  if (!isExternalDrag(e)) return;
   e.preventDefault();
 });
 dom.sidebar.addEventListener('drop', async (e) => {
+  if (!isExternalDrag(e)) return;
   e.preventDefault();
   dragCounter = 0;
   dom.sidebar.classList.remove('drag-over');
@@ -2643,42 +3515,61 @@ dom.sidebar.addEventListener('drop', async (e) => {
 let pendingRestore = []; // 需要用户手势重新授权的文件夹
 
 async function init() {
-  const saved = await getSavedFolders();
+  console.log('[PartnerFM] init() 开始...');
   pendingRestore = [];
 
+  let saved = [];
+  try {
+    saved = await getSavedFolders();
+    console.log('[PartnerFM] IndexedDB 中找到 ' + saved.length + ' 个已保存的文件夹');
+  } catch (e) {
+    console.error('[PartnerFM] IndexedDB 读取失败: ' + e.message + '，将尝试 localStorage 恢复');
+    // IndexedDB 不可用时，尝试从 localStorage 恢复（仅作为提示）
+    saved = loadFromLocalStorage();
+  }
+
   for (const { id, name, handle } of saved) {
-    if (!handle) continue;
+    if (!handle) {
+      console.log('[PartnerFM] 跳过: handle 为 null — ' + name);
+      continue;
+    }
 
     try {
       const perm = await handle.queryPermission({ mode: 'readwrite' });
+      console.log('[PartnerFM] ' + handle.name + ' 权限: ' + perm);
       if (perm === 'granted') {
         const folder = { id, name: handle.name, handle, children: [], expanded: true };
         state.folders.push(folder);
         await loadFolderChildren(folder);
-      } else if (perm === 'prompt') {
-        // 需要用户手势才能重新授权，先记下来
-        pendingRestore.push({ id, name, handle });
+        console.log('[PartnerFM] ✅ 恢复: ' + handle.name);
       } else {
-        // 'denied'，从存储中移除
-        await removeSavedFolder(id);
+        // 非 granted 不删除，保留到 IndexedDB 等用户手势重新授权
+        pendingRestore.push({ id, name, handle });
+        console.log('[PartnerFM] ⏳ 待授权: ' + handle.name + ' (perm=' + perm + ')');
       }
     } catch (err) {
-      await removeSavedFolder(id);
+      // queryPermission 抛异常也保留，等用户手势重新授权
+      console.log('[PartnerFM] 错误: ' + err.message + ' — ' + (handle.name || 'unknown') + '，加入待授权');
+      pendingRestore.push({ id, name, handle });
     }
   }
 
+  console.log('[PartnerFM] 已恢复 ' + state.folders.length + ' 个，待授权 ' + pendingRestore.length + ' 个');
+
   if (state.folders.length === 0 && pendingRestore.length === 0) {
-    const suggest = confirm('欢迎使用拾元文件夹！\n\n是否立即添加一个文件夹开始管理？');
+    const suggest = confirm('欢迎使用 PartnerFM！\n\n是否立即添加一个文件夹开始管理？');
     if (suggest) await addFolder();
   }
 
+  applyFolderOrder();
   refreshAllFiles();
   renderAll();
 
-  // 有待恢复的文件夹，显示恢复按钮
   if (pendingRestore.length > 0) {
     showRestoreBanner();
   }
+  
+  console.log('[PartnerFM] init() 完成');
 }
 
 function showRestoreBanner() {
@@ -2723,6 +3614,10 @@ function showRestoreBanner() {
           const folder = { id: item.id, name: item.handle.name, handle: item.handle, children: [], expanded: true };
           state.folders.push(folder);
           await loadFolderChildren(folder);
+          // 重新授权成功后，再次持久化 handle 到 IndexedDB
+          await saveFolderHandle(item.id, item.handle.name, item.handle);
+        } else {
+          await removeSavedFolder(item.id);
         }
       } catch (err) {
         await removeSavedFolder(item.id);
@@ -2744,16 +3639,27 @@ init().catch(console.error);
 <!-- ===== 模块管理与聊天功能 ===== -->
 <script>
 // ========== 模块切换 ==========
-let activeModule = 'file';
+let activeModule = localStorage.getItem('partnerfm-module') || 'file';
 function switchModule(name) {
   activeModule = name;
+  localStorage.setItem('partnerfm-module', name);
   document.querySelectorAll('.module-btn').forEach(b => b.classList.toggle('active', b.dataset.module === name));
   document.querySelectorAll('.module-content').forEach(c => c.classList.toggle('active', c.id === name + '-module'));
   if (name === 'cli') loadCliList();
   if (name === 'mcp') loadMcpList();
+  if (name === 'prompt') loadPromptList();
   if (name === 'model') loadModelList();
-  saveState();
 }
+
+// 启动时恢复上次的模块
+setTimeout(() => {
+  try {
+    const saved = localStorage.getItem('partnerfm-module');
+    if (saved && saved !== 'file' && document.getElementById(saved + '-module')) {
+      switchModule(saved);
+    }
+  } catch(e) { console.warn('模块恢复失败:', e.message); }
+}, 100);
 
 document.querySelectorAll('.module-btn').forEach(b => {
   b.addEventListener('click', () => switchModule(b.dataset.module));
@@ -2761,19 +3667,41 @@ document.querySelectorAll('.module-btn').forEach(b => {
 
 // ========== 导航折叠 ==========
 let navCollapsed = false;
-document.getElementById('nav-toggle').addEventListener('click', () => {
+function toggleNav() {
   navCollapsed = !navCollapsed;
   document.getElementById('module-nav').classList.toggle('collapsed', navCollapsed);
   document.getElementById('nav-toggle').textContent = navCollapsed ? '▶' : '◀';
-});
+  document.getElementById('nav-restore').classList.toggle('show', navCollapsed);
+}
+document.getElementById('nav-toggle').addEventListener('click', toggleNav);
 
 // ========== 聊天折叠 ==========
 let chatCollapsed = false;
-document.getElementById('chat-toggle').addEventListener('click', () => {
+function toggleChat() {
   chatCollapsed = !chatCollapsed;
   document.getElementById('chat-column').classList.toggle('collapsed', chatCollapsed);
   document.getElementById('chat-toggle').textContent = chatCollapsed ? '◀' : '▶';
-});
+  document.getElementById('chat-restore').classList.toggle('show', chatCollapsed);
+}
+document.getElementById('chat-toggle').addEventListener('click', toggleChat);
+
+// ========== 全屏展示 ==========
+function toggleFullscreen() {
+  const el = document.getElementById('main-panel');
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    el.requestFullscreen();
+  }
+}
+function onFullscreenChange() {
+  const isFs = !!document.fullscreenElement;
+  document.getElementById('main-layout').classList.toggle('fullscreen', isFs);
+  const btn = document.getElementById('fullscreen-btn');
+  btn.style.color = isFs ? 'var(--accent)' : '';
+}
+document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', onFullscreenChange);
 
 // ========== 聊天栏拖拽调整宽度 ==========
 (function() {
@@ -2794,130 +3722,692 @@ document.getElementById('chat-toggle').addEventListener('click', () => {
   });
 })();
 
-// ========== 模型预设 ==========
-const MODEL_PRESETS = [
-  { name: 'DeepSeek V3', url: 'https://api.deepseek.com/v1', model: 'deepseek-chat', desc: '国产高性价比' },
-  { name: 'DeepSeek R1', url: 'https://api.deepseek.com/v1', model: 'deepseek-reasoner', desc: '深度推理' },
-  { name: 'OpenAI GPT-4o', url: 'https://api.openai.com/v1', model: 'gpt-4o', desc: 'OpenAI 旗舰' },
-  { name: 'OpenAI GPT-4o-mini', url: 'https://api.openai.com/v1', model: 'gpt-4o-mini', desc: '轻量快速' },
-  { name: 'GLM-4', url: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4', desc: '智谱旗舰' },
-  { name: '通义千问', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-plus', desc: '阿里旗舰' },
-  { name: 'Moonshot Kimi', url: 'https://api.moonshot.cn/v1', model: 'moonshot-v1-8k', desc: '月之暗面' },
-  { name: '自定义', url: '', model: '', desc: '输入任意 OpenAI 兼容地址' },
-];
+// ========== 导航栏拖拽调整宽度 ==========
+(function() {
+  let isResizing = false, startX, startWidth;
+  const resizer = document.getElementById('nav-resizer');
+  const nav = document.getElementById('module-nav');
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true; startX = e.clientX; startWidth = nav.offsetWidth;
+    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const newWidth = Math.max(52, Math.min(200, startWidth + (e.clientX - startX)));
+    nav.style.width = newWidth + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (isResizing) { isResizing = false; document.body.style.cursor = ''; document.body.style.userSelect = ''; }
+  });
+})();
 
-let modelConfig = { models: [] };
-let chatMessages = [];
+// ========== 侧边栏拖拽调整宽度 ==========
+(function() {
+  let isResizing = false, startX, startWidth;
+  const resizer = document.getElementById('sidebar-resizer');
+  const sidebar = document.getElementById('sidebar');
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true; startX = e.clientX; startWidth = sidebar.offsetWidth;
+    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const newWidth = Math.max(220, Math.min(600, startWidth + (e.clientX - startX)));
+    sidebar.style.width = newWidth + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (isResizing) { isResizing = false; document.body.style.cursor = ''; document.body.style.userSelect = ''; }
+  });
+})();
 
+// ========== 模型管理（Hermes 风格：Provider + 模型元数据）==========
+
+// Provider 注册表
+const PROVIDER_REGISTRY = {
+  // === 聚合 API ===
+  "302ai": {
+    name: "302.AI", url: "https://api.302.ai/v1",
+    desc: "聚合 API，一把 Key 访问所有模型",
+    models: {
+      "deepseek-v4-flash":   { label: "DeepSeek V4 Flash", ctx: "1M",   cost: "$0.14/$0.28" },
+      "deepseek-v4-pro":     { label: "DeepSeek V4 Pro",   ctx: "1M",   cost: "$0.44/$0.87" },
+      "gpt-4o":              { label: "GPT-4o",            ctx: "128K", cost: "$2.5/$10" },
+      "gpt-4.1":             { label: "GPT-4.1",           ctx: "1M",   cost: "$2/$8" },
+      "gpt-4.1-mini":        { label: "GPT-4.1 Mini",      ctx: "1M",   cost: "$0.4/$1.6" },
+      "gpt-5":               { label: "GPT-5",             ctx: "400K", cost: "$1.25/$10" },
+      "claude-sonnet-4-20250514":  { label: "Claude Sonnet 4",   ctx: "200K", cost: "$3/$15" },
+      "claude-haiku-4-5-20251001": { label: "Claude Haiku 4.5",  ctx: "200K", cost: "$1/$5" },
+      "claude-opus-4-20250514":    { label: "Claude Opus 4",     ctx: "200K", cost: "$15/$75" },
+      "glm-4.6":             { label: "GLM-4.6",           ctx: "205K", cost: "$0.29/$1.14" },
+      "qwen-plus":           { label: "Qwen Plus",         ctx: "1M",   cost: "$0.12/$1.2" },
+      "qwen3-max":           { label: "Qwen3 Max",         ctx: "258K", cost: "$0.86/$3.43" },
+      "gemini-2.5-flash":    { label: "Gemini 2.5 Flash",  ctx: "1M",   cost: "$0.3/$2.5" },
+      "gemini-2.5-pro":      { label: "Gemini 2.5 Pro",    ctx: "1M",   cost: "$1.25/$10" },
+      "kimi-k2-thinking":    { label: "Kimi K2",           ctx: "262K", cost: "$0.58/$2.3" },
+      "minimax-m3":          { label: "MiniMax M3",        ctx: "1M",   cost: "$0.5/$2" },
+      "mistral-large-2512":  { label: "Mistral Large",     ctx: "128K", cost: "$1.1/$3.3" },
+    }
+  },
+
+  // === 国产 ===
+  "deepseek": {
+    name: "DeepSeek", url: "https://api.deepseek.com/v1",
+    desc: "V4 系列：Flash 快速版 + Pro 旗舰版",
+    models: {
+      "deepseek-v4-flash": { label: "V4 Flash", ctx: "1M", cost: "$0.14/$0.28" },
+      "deepseek-v4-pro":   { label: "V4 Pro",   ctx: "1M", cost: "$0.44/$0.87" },
+    }
+  },
+  "zhipu": {
+    name: "智谱 GLM", url: "https://open.bigmodel.cn/api/paas/v4",
+    desc: "GLM 系列模型",
+    models: {
+      "glm-4.6": { label: "GLM-4.6", ctx: "205K", cost: "$0.29/$1.14" },
+      "glm-4.7": { label: "GLM-4.7", ctx: "205K", cost: "$0.29/$1.14" },
+    }
+  },
+  "qwen": {
+    name: "通义千问", url: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    desc: "阿里云通义千问",
+    models: {
+      "qwen-plus":  { label: "Qwen Plus",  ctx: "1M",   cost: "$0.12/$1.2" },
+      "qwen-max":   { label: "Qwen Max",   ctx: "33K",  cost: "$0.34/$1.37" },
+      "qwen3-max":  { label: "Qwen3 Max",  ctx: "258K", cost: "$0.86/$3.43" },
+    }
+  },
+  "moonshot": {
+    name: "Moonshot", url: "https://api.moonshot.cn/v1",
+    desc: "月之暗面 Kimi",
+    models: {
+      "kimi-k2-thinking": { label: "Kimi K2", ctx: "262K", cost: "$0.58/$2.3" },
+    }
+  },
+  "doubao": {
+    name: "豆包 Doubao", url: "https://ark.cn-beijing.volces.com/api/v3",
+    desc: "字节跳动豆包大模型（火山方舟）",
+    models: {
+      "doubao-seed-1-8-251228":       { label: "Seed 1.8",      ctx: "256K", cost: "" },
+      "doubao-seed-code-preview-latest": { label: "Seed Code",  ctx: "256K", cost: "" },
+      "doubao-1.5-pro-256k":          { label: "1.5 Pro 256K",  ctx: "256K", cost: "" },
+    }
+  },
+  "minimax": {
+    name: "MiniMax", url: "https://api.minimaxi.com/v1",
+    desc: "MiniMax M 系列大模型",
+    models: {
+      "MiniMax-M3":  { label: "M3",  ctx: "1M",    cost: "" },
+      "MiniMax-M2.7": { label: "M2.7", ctx: "205K", cost: "" },
+    }
+  },
+  "spark": {
+    name: "讯飞星火", url: "https://spark-api-open.xf-yun.com/v1",
+    desc: "科大讯飞星火大模型",
+    models: {
+      "spark-lite":  { label: "Lite 免费版", ctx: "",   cost: "免费" },
+      "spark-pro":   { label: "Pro",         ctx: "",   cost: "" },
+      "spark-max":   { label: "Max",         ctx: "",   cost: "" },
+    }
+  },
+  "baichuan": {
+    name: "百川智能", url: "https://api.baichuan-ai.com/v1",
+    desc: "百川大模型",
+    models: {
+      "Baichuan4-Air": { label: "Baichuan4 Air", ctx: "32K", cost: "" },
+      "Baichuan4":     { label: "Baichuan4",     ctx: "32K", cost: "" },
+    }
+  },
+  "lingyi": {
+    name: "零一万物", url: "https://api.lingyiwanwu.com/v1",
+    desc: "Yi 系列大模型",
+    models: {
+      "yi-large":  { label: "Yi Large",  ctx: "32K",  cost: "" },
+      "yi-medium": { label: "Yi Medium", ctx: "16K",  cost: "" },
+    }
+  },
+
+  // === 海外 ===
+  "openai": {
+    name: "OpenAI", url: "https://api.openai.com/v1",
+    desc: "OpenAI 官方 API",
+    models: {
+      "gpt-4o":        { label: "GPT-4o",        ctx: "128K", cost: "$2.5/$10" },
+      "gpt-4.1":       { label: "GPT-4.1",       ctx: "1M",   cost: "$2/$8" },
+      "gpt-4.1-mini":  { label: "GPT-4.1 Mini",  ctx: "1M",   cost: "$0.4/$1.6" },
+      "gpt-5":         { label: "GPT-5",         ctx: "400K", cost: "$1.25/$10" },
+      "gpt-5-mini":    { label: "GPT-5 Mini",    ctx: "400K", cost: "$0.25/$2" },
+    }
+  },
+  "anthropic": {
+    name: "Anthropic", url: "https://api.anthropic.com/v1",
+    desc: "Claude 系列模型",
+    models: {
+      "claude-sonnet-4-20250514":  { label: "Claude Sonnet 4",   ctx: "200K", cost: "$3/$15" },
+      "claude-haiku-4-5-20251001": { label: "Claude Haiku 4.5",  ctx: "200K", cost: "$1/$5" },
+      "claude-opus-4-20250514":    { label: "Claude Opus 4",     ctx: "200K", cost: "$15/$75" },
+    }
+  },
+  "gemini": {
+    name: "Google Gemini", url: "https://generativelanguage.googleapis.com/v1beta/openai",
+    desc: "Google Gemini 系列",
+    models: {
+      "gemini-2.5-flash": { label: "Gemini 2.5 Flash", ctx: "1M", cost: "" },
+      "gemini-2.5-pro":   { label: "Gemini 2.5 Pro",   ctx: "1M", cost: "" },
+    }
+  },
+  "mistral": {
+    name: "Mistral AI", url: "https://api.mistral.ai/v1",
+    desc: "欧洲 Mistral 大模型",
+    models: {
+      "mistral-large-latest": { label: "Mistral Large", ctx: "128K", cost: "" },
+      "ministral-8b-latest":  { label: "Ministral 8B",  ctx: "128K", cost: "" },
+    }
+  },
+};
+let modelConfig = { providers: {}, default: "" };
+let pmProviderType = "preset"; // 弹窗类型
+let pmEditPid = null;          // 编辑模式时的 pid
+let pmFetchedModels = [];      // 从 API 拉取的模型列表
+
+// ========== 数据持久化 ==========
 async function loadModelConfig() {
   try {
-    const resp = await fetch('/api/models'); modelConfig = await resp.json();
-  } catch(e) { modelConfig = { models: [] }; }
+    const r = await fetch('/api/models');
+    const data = await r.json();
+    if (data.models && !data.providers) {
+      modelConfig = migrateOldConfig(data);
+      saveModelConfig();
+    } else {
+      modelConfig = Object.assign({ providers: {}, default: "" }, data);
+    }
+  } catch(e) { modelConfig = { providers: {}, default: "" }; }
   refreshModelSelect();
 }
-function saveModelConfig() { fetch('/api/models', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(modelConfig) }); }
 
-function refreshModelSelect() {
-  const sel = document.getElementById('chat-model-select');
-  sel.innerHTML = '<option value="">未选择模型</option>';
-  modelConfig.models.forEach((m, i) => { const o = document.createElement('option'); o.value = i; o.textContent = m.name; sel.appendChild(o); });
+function saveModelConfig() {
+  fetch('/api/models', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(modelConfig) });
 }
 
+function migrateOldConfig(old) {
+  const cfg = { providers: {}, default: "" };
+  for (const m of (old.models || [])) {
+    let pid = null;
+    for (const [id, p] of Object.entries(PROVIDER_REGISTRY)) {
+      if (p.url === m.url || p.name === m.name) { pid = id; break; }
+    }
+    if (!pid) { pid = "custom_" + Date.now(); cfg.providers[pid] = { name: m.name, url: m.url, key: m.key, models: [m.model] }; }
+    else if (!cfg.providers[pid]) { cfg.providers[pid] = { key: m.key, models: [m.model] }; }
+    else { cfg.providers[pid].key = cfg.providers[pid].key || m.key; if (!cfg.providers[pid].models.includes(m.model)) cfg.providers[pid].models.push(m.model); }
+  }
+  const pids = Object.keys(cfg.providers);
+  if (pids.length) cfg.default = pids[0] + "/" + cfg.providers[pids[0]].models[0];
+  return cfg;
+}
+
+function getProviderModelMap() {
+  const list = [];
+  for (const [pid, cfg] of Object.entries(modelConfig.providers)) {
+    if (!cfg.key) continue;
+    const prov = PROVIDER_REGISTRY[pid];
+    const url = cfg.url || (prov ? prov.url : '');
+    const name = cfg.name || (prov ? prov.name : pid);
+    const icon = prov ? prov.icon : "⚙️";
+    for (const mid of (cfg.models || [])) {
+      const meta = prov && prov.models ? prov.models[mid] : null;
+      list.push({ pid, name, icon, url, key: cfg.key, mid, label: meta ? meta.label : mid, ctx: meta ? meta.ctx : "", cost: meta ? meta.cost : "" });
+    }
+  }
+  return list;
+}
+
+// ========== 聊天模型选择器 ==========
+function refreshModelSelect() {
+  const sel = document.getElementById('chat-model-select');
+  if (!sel) return;
+  let map; try { map = getProviderModelMap(); } catch(e) { map = []; }
+  sel.innerHTML = '<option value="">选择模型</option>';
+  if (!map.length) return;
+  let lastPid = "";
+  for (const m of map) {
+    if (m.pid !== lastPid) {
+      const og = document.createElement('optgroup');
+      og.label = m.name;
+      sel.appendChild(og);
+      lastPid = m.pid;
+    }
+    const opt = document.createElement('option');
+    opt.value = m.pid + "/" + m.mid;
+    const costHint = m.cost ? " · " + m.cost : "";
+    opt.textContent = (m.label || m.mid) + "  [" + (m.ctx || "?") + costHint + "]";
+    sel.appendChild(opt);
+  }
+}
+
+function refreshPromptSelect() {
+  const sel = document.getElementById('chat-prompt-select');
+  if (!sel) return;
+  const s = getActiveChat();
+  sel.innerHTML = '<option value="" disabled selected>选择模板</option>';
+  for (const t of promptConfig.prompts) {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name;
+    sel.appendChild(opt);
+  }
+  if (s && s.systemPrompt) sel.value = s.systemPrompt;
+}
+
+// ========== 主列表页：Provider 卡片 ==========
 function loadModelList() {
   const container = document.getElementById('model-list');
-  if (modelConfig.models.length === 0) {
-    container.innerHTML = '<div class="empty-state" style="padding:32px">还没有添加模型，点击下方按钮添加</div>';
+  const pids = Object.keys(modelConfig.providers);
+
+  container.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <h2 style="font-size:22px;font-weight:700;margin:0">模型</h2>
+    <button class="add-model-btn" onclick="openAddProviderModal()" style="padding:9px 20px;font-size:13px">+ 添加 Provider</button>
+  </div>`;
+
+  if (pids.length === 0) {
+    container.innerHTML += `<div style="text-align:center;padding:60px 0;color:var(--text-secondary)">
+      <div style="font-size:48px;margin-bottom:12px">🤖</div>
+      <div style="margin-bottom:8px">还没有配置 Provider</div>
+      <div style="font-size:12px;color:var(--text-tertiary)">点击上方按钮添加</div>
+    </div>`;
     return;
   }
-  container.innerHTML = modelConfig.models.map((m, i) => `
-    <div class="mgmt-card">
-      <div class="mgmt-card-header">
-        <span class="mgmt-icon">🤖</span>
-        <h4>${m.name}</h4>
-        <span class="mgmt-badge">${m.model}</span>
-        <button class="remove-model-btn" onclick="removeModel(${i})">移除</button>
+
+  const defaultPid = modelConfig.default ? modelConfig.default.split('/')[0] : "";
+  const defaultMid = modelConfig.default ? modelConfig.default.split('/')[1] : "";
+
+  for (const [pid, cfg] of Object.entries(modelConfig.providers)) {
+    const prov = PROVIDER_REGISTRY[pid];
+    const isBuiltin = !!prov;
+    const name = cfg.name || (prov ? prov.name : pid);
+    const isDefault = pid === defaultPid;
+    const models = cfg.models || [];
+    const modelTags = models.map(mid => {
+      const meta = prov && prov.models ? prov.models[mid] : null;
+      const label = meta ? meta.label : mid;
+      const ctxStr = meta && meta.ctx ? meta.ctx : '';
+      const costStr = meta && meta.cost ? meta.cost : '';
+      const info = [ctxStr, costStr].filter(Boolean).join(' · ');
+      const isDefaultModel = isDefault && mid === defaultMid;
+      return `<span class="pc-model-tag${isDefaultModel ? ' is-default' : ''}">
+        ${isDefaultModel ? '<span class="is-default-dot"></span>' : ''}${label}
+        ${info ? '<span style="font-size:10px;opacity:0.55;margin-left:2px">' + info + '</span>' : ''}
+        ${isDefaultModel ? ' <span style="font-size:10px;opacity:0.7">默认</span>' : ''}
+      </span>`;
+    }).join('');
+
+    container.innerHTML += `<div class="provider-card">
+      <div class="pc-top">
+        <div style="flex:1">
+          <div class="pc-name">${escapeHtml(name)}</div>
+          ${prov && prov.desc ? '<div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">' + escapeHtml(prov.desc) + '</div>' : ''}
+        </div>
+        ${isDefault ? '<span class="pc-badge-default">当前默认</span>' : ''}
+        ${isBuiltin ? '<span class="pc-badge-builtin">内置</span>' : ''}
       </div>
-      <p><b>地址：</b><code>${m.url}</code> &nbsp; <b>模型：</b><code>${m.model || '(默认)'}</code></p>
-      <p style="margin-top:4px">${m.desc || ''}</p>
+      <div class="pc-info-row"><span class="pc-label">Provider</span><span class="pc-value">${escapeHtml(pid)}</span></div>
+      <div class="pc-info-row"><span class="pc-label">Base URL</span><span class="pc-value">${escapeHtml(cfg.url || (prov ? prov.url : ''))}</span></div>
+      <div class="pc-model-section">
+        <div class="pc-model-header"><span>模型列表</span><span>${models.length} 个模型</span></div>
+        <div class="pc-model-tags">${modelTags || '<span style="font-size:12px;color:var(--text-tertiary)">暂无</span>'}</div>
+      </div>
+      <div class="pc-actions">
+        <button class="pc-btn" onclick="renameProvider('${pid}')">显示名</button>
+        <button class="pc-btn" onclick="manageModels('${pid}')">管理可见模型</button>
+        <button class="pc-btn danger" onclick="removeProvider('${pid}')">删除</button>
+      </div>
+    </div>`;
+  }
+}
+
+// ========== Provider 弹窗 ==========
+function openAddProviderModal() {
+  pmEditPid = null;
+  pmProviderType = "preset";
+  document.getElementById('pm-title').textContent = "添加 Provider";
+  document.getElementById('pm-submit-btn').textContent = "添加";
+  resetProviderModal();
+  document.getElementById('provider-modal').classList.add('open');
+}
+
+function openEditProviderModal(pid) {
+  const cfg = modelConfig.providers[pid];
+  if (!cfg) return;
+  pmEditPid = pid;
+  const prov = PROVIDER_REGISTRY[pid];
+  if (prov) {
+    pmProviderType = "preset";
+    document.getElementById('pm-preset-select').value = pid;
+    document.getElementById('pm-preset-url').value = prov.url;
+    document.getElementById('pm-preset-key').value = cfg.key || "";
+    document.getElementById('pm-preset-model').innerHTML = (cfg.models || []).map(m => `<option value="${m}">${m}</option>`).join('');
+    if (cfg.models && cfg.models[0]) document.getElementById('pm-preset-model').value = cfg.models[0];
+  } else {
+    pmProviderType = "custom";
+    document.getElementById('pm-cust-name').value = cfg.name || "";
+    document.getElementById('pm-cust-url').value = cfg.url || "";
+    document.getElementById('pm-cust-key').value = cfg.key || "";
+    document.getElementById('pm-cust-model').innerHTML = (cfg.models || []).map(m => `<option value="${m}">${m}</option>`).join('');
+    if (cfg.models && cfg.models[0]) document.getElementById('pm-cust-model').value = cfg.models[0];
+  }
+  updateProviderTypeUI();
+  document.getElementById('pm-title').textContent = "编辑 Provider";
+  document.getElementById('pm-submit-btn').textContent = "保存";
+  document.getElementById('provider-modal').classList.add('open');
+}
+
+function closeProviderModal() {
+  document.getElementById('provider-modal').classList.remove('open');
+  pmEditPid = null;
+  pmFetchedModels = [];
+}
+
+function resetProviderModal() {
+  document.getElementById('pm-preset-select').value = "";
+  document.getElementById('pm-preset-url').value = "";
+  document.getElementById('pm-preset-key').value = "";
+  document.getElementById('pm-preset-model').innerHTML = '<option value="">先获取模型列表...</option>';
+  document.getElementById('pm-preset-status').textContent = "";
+  document.getElementById('pm-cust-name').value = "";
+  document.getElementById('pm-cust-url').value = "";
+  document.getElementById('pm-cust-key').value = "";
+  document.getElementById('pm-cust-model').innerHTML = '<option value="">先获取模型列表...</option>';
+  document.getElementById('pm-cust-status').textContent = "";
+  document.getElementById('pm-cust-ctx').value = "";
+  updateProviderTypeUI();
+}
+
+function switchProviderType(type) {
+  pmProviderType = type;
+  updateProviderTypeUI();
+}
+
+function updateProviderTypeUI() {
+  document.getElementById('pm-type-preset').classList.toggle('active', pmProviderType === 'preset');
+  document.getElementById('pm-type-custom').classList.toggle('active', pmProviderType === 'custom');
+  document.getElementById('pm-preset-fields').style.display = pmProviderType === 'preset' ? '' : 'none';
+  document.getElementById('pm-custom-fields').style.display = pmProviderType === 'custom' ? '' : 'none';
+}
+
+function onPresetSelect() {
+  const pid = document.getElementById('pm-preset-select').value;
+  const prov = PROVIDER_REGISTRY[pid];
+  if (prov) document.getElementById('pm-preset-url').value = prov.url;
+}
+
+// 初始化 preset 下拉框
+function initPresetSelect() {
+  const sel = document.getElementById('pm-preset-select');
+  sel.innerHTML = '<option value="">选择一个 provider...</option>';
+  for (const [pid, prov] of Object.entries(PROVIDER_REGISTRY)) {
+    const opt = document.createElement('option');
+    opt.value = pid;
+    opt.textContent = prov.name;
+    sel.appendChild(opt);
+  }
+}
+
+// ========== API 模型拉取 ==========
+async function fetchPresetModels() {
+  const btn = document.getElementById('pm-preset-fetch');
+  const status = document.getElementById('pm-preset-status');
+  const url = document.getElementById('pm-preset-url').value.trim();
+  const key = document.getElementById('pm-preset-key').value.trim();
+  if (!url || !key) { status.textContent = "请先填写 Base URL 和 API Key"; status.className = "pm-fetch-status error"; return; }
+  btn.disabled = true; btn.textContent = "获取中..."; status.textContent = ""; status.className = "pm-fetch-status";
+  const models = await doFetchModels(url, key);
+  btn.disabled = false; btn.textContent = "获取";
+  if (models.length === 0) { status.textContent = "获取失败，请检查 URL 和 Key"; status.className = "pm-fetch-status error"; return; }
+  pmFetchedModels = models;
+  const sel = document.getElementById('pm-preset-model');
+  sel.innerHTML = models.map(m => `<option value="${m.id}">${m.id}${m.label ? ' — ' + m.label : ''}</option>`).join('');
+  status.textContent = "已获取 " + models.length + " 个模型";
+}
+
+async function fetchCustomModels() {
+  const btn = document.getElementById('pm-cust-fetch');
+  const status = document.getElementById('pm-cust-status');
+  const url = document.getElementById('pm-cust-url').value.trim();
+  const key = document.getElementById('pm-cust-key').value.trim();
+  if (!url || !key) { status.textContent = "请先填写 Base URL 和 API Key"; status.className = "pm-fetch-status error"; return; }
+  btn.disabled = true; btn.textContent = "获取中..."; status.textContent = ""; status.className = "pm-fetch-status";
+  const models = await doFetchModels(url, key);
+  btn.disabled = false; btn.textContent = "获取";
+  if (models.length === 0) { status.textContent = "获取失败，请检查 URL 和 Key"; status.className = "pm-fetch-status error"; return; }
+  pmFetchedModels = models;
+  const sel = document.getElementById('pm-cust-model');
+  sel.innerHTML = models.map(m => `<option value="${m.id}">${m.id}${m.label ? ' — ' + m.label : ''}</option>`).join('');
+  status.textContent = "已获取 " + models.length + " 个模型";
+}
+
+async function doFetchModels(url, key) {
+  try {
+    const base = url.replace(/\/+$/, "");
+    const resp = await fetch(base + "/models", { headers: { 'Authorization': 'Bearer ' + key } });
+    if (!resp.ok) throw new Error(resp.status);
+    const data = await resp.json();
+    return (data.data || data.models || []).map(m => ({ id: m.id, label: m.name || "" }));
+  } catch(e) {
+    console.error("获取模型列表失败:", e);
+    return [];
+  }
+}
+
+// ========== 提交 Provider ==========
+function submitProvider() {
+  const isPreset = pmProviderType === 'preset';
+  let pid, name, url, key, model, ctxLen;
+
+  if (isPreset) {
+    pid = document.getElementById('pm-preset-select').value;
+    url = document.getElementById('pm-preset-url').value.trim();
+    key = document.getElementById('pm-preset-key').value.trim();
+    model = document.getElementById('pm-preset-model').value;
+    if (!pid) { alert('请选择 Provider'); return; }
+  } else {
+    pid = pmEditPid || ("custom_" + Date.now());
+    name = document.getElementById('pm-cust-name').value.trim();
+    url = document.getElementById('pm-cust-url').value.trim();
+    key = document.getElementById('pm-cust-key').value.trim();
+    model = document.getElementById('pm-cust-model').value;
+    ctxLen = document.getElementById('pm-cust-ctx').value.trim();
+    if (!url) { alert('Base URL 不能为空'); return; }
+  }
+  if (!key) { alert('API Key 不能为空'); return; }
+  if (!model) { alert('请选择一个默认模型（点击"获取"拉取模型列表）'); return; }
+
+  if (!modelConfig.providers[pid]) modelConfig.providers[pid] = { key: "", models: [] };
+  const cfg = modelConfig.providers[pid];
+  cfg.key = key;
+  cfg.url = url;
+  if (name) cfg.name = name;
+  if (ctxLen) cfg.ctxLength = parseInt(ctxLen) || 0;
+  if (!cfg.models.includes(model)) cfg.models.push(model);
+
+  if (!modelConfig.default || modelConfig.default.startsWith(pid + "/")) {
+    modelConfig.default = pid + "/" + model;
+  }
+
+  saveModelConfig();
+  refreshModelSelect();
+  loadModelList();
+  closeProviderModal();
+}
+
+// ========== 卡片操作 ==========
+function renameProvider(pid) {
+  const cfg = modelConfig.providers[pid];
+  const prov = PROVIDER_REGISTRY[pid];
+  const currentName = cfg.name || (prov ? prov.name : pid);
+  showInlineModal("编辑显示名", currentName, (newName) => {
+    if (newName && newName !== currentName) {
+      modelConfig.providers[pid].name = newName;
+      saveModelConfig();
+      loadModelList();
+    }
+  });
+}
+
+function manageModels(pid) {
+  const prov = PROVIDER_REGISTRY[pid];
+  if (prov) { openEditProviderModal(pid); return; }
+  // 自定义 provider：只编辑单模型
+  const cfg = modelConfig.providers[pid];
+  showInlineModal("编辑模型 ID", (cfg.models || [])[0] || "", (newModel) => {
+    if (newModel) {
+      modelConfig.providers[pid].models = [newModel];
+      if (modelConfig.default && modelConfig.default.startsWith(pid + "/")) {
+        modelConfig.default = pid + "/" + newModel;
+      }
+      saveModelConfig();
+      refreshModelSelect();
+      loadModelList();
+    }
+  });
+}
+
+function removeProvider(pid) {
+  const cfg = modelConfig.providers[pid];
+  const prov = PROVIDER_REGISTRY[pid];
+  const name = cfg.name || (prov ? prov.name : pid);
+  if (!confirm('确定删除 Provider "' + name + '" 吗？')) return;
+  delete modelConfig.providers[pid];
+  if (modelConfig.default && modelConfig.default.startsWith(pid + "/")) modelConfig.default = "";
+  saveModelConfig();
+  refreshModelSelect();
+  loadModelList();
+}
+
+// ========== 内联编辑弹窗 ==========
+let inlineModalResolve = null;
+function showInlineModal(title, value, callback) {
+  document.getElementById('im-title').textContent = title;
+  document.getElementById('im-input').value = value;
+  document.getElementById('inline-modal').classList.add('open');
+  document.getElementById('im-input').focus();
+  document.getElementById('im-input').select();
+  inlineModalResolve = callback;
+}
+function closeInlineModal() {
+  document.getElementById('inline-modal').classList.remove('open');
+  inlineModalResolve = null;
+}
+document.getElementById('im-confirm').addEventListener('click', () => {
+  const val = document.getElementById('im-input').value.trim();
+  if (inlineModalResolve) { inlineModalResolve(val); inlineModalResolve = null; }
+  closeInlineModal();
+});
+document.getElementById('im-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('im-confirm').click();
+  if (e.key === 'Escape') closeInlineModal();
+});
+document.getElementById('inline-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeInlineModal();
+});
+document.getElementById('provider-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeProviderModal();
+});
+
+// ========== 工具函数 ==========
+function toggleKey(btn, inputId) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+function escapeHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// 初始化 preset 下拉 + 弹窗关闭事件
+initPresetSelect();
+// ========== 提示词列表 ==========
+function loadPromptList() {
+  const container = document.getElementById('prompt-list');
+  if (!container) return;
+  const prompts = promptConfig.prompts || [];
+  if (prompts.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="padding:32px">还没有提示词模板</div>';
+    return;
+  }
+  container.innerHTML = prompts.map(p => `
+    <div class="prompt-card">
+      <div class="prompt-card-body">
+        <h4>${escapeHtml(p.name)}</h4>
+        <p>${escapeHtml(p.prompt || '(空)')}</p>
+      </div>
+      <div class="prompt-card-actions">
+        <button onclick="openPromptModal('${p.id}')">编辑</button>
+        <button class="prompt-del-btn" onclick="deletePrompt('${p.id}')">删除</button>
+      </div>
     </div>
   `).join('');
 }
 
-function removeModel(idx) {
-  if (!confirm('确定移除模型「' + modelConfig.models[idx].name + '」吗？')) return;
-  modelConfig.models.splice(idx, 1);
-  saveModelConfig();
-  refreshModelSelect();
-  loadModelList();
+function openPromptModal(id) {
+  promptEditId = id || null;
+  const modal = document.getElementById('prompt-modal');
+  const title = document.getElementById('prompt-modal-title');
+  const nameInput = document.getElementById('prompt-modal-name');
+  const textInput = document.getElementById('prompt-modal-text');
+  const submitBtn = document.getElementById('prompt-submit-btn');
+
+  if (id) {
+    const p = promptConfig.prompts.find(t => t.id === id);
+    if (p) {
+      title.textContent = '编辑提示词';
+      nameInput.value = p.name;
+      textInput.value = p.prompt || '';
+      submitBtn.textContent = '保存';
+    }
+  } else {
+    title.textContent = '新增提示词';
+    nameInput.value = '';
+    textInput.value = '';
+    submitBtn.textContent = '添加';
+  }
+  if (modal) modal.classList.add('open');
+  if (nameInput) nameInput.focus();
 }
 
-function showAddModelForm() {
-  const container = document.getElementById('model-list');
-  container.innerHTML = `
-    <div class="mgmt-card model-form">
-      <h4 style="margin-bottom:14px">添加模型</h4>
-      <div class="form-group">
-        <label>选择预设</label>
-        <select id="model-preset" onchange="fillModelPreset()">
-          <option value="">-- 选择预设 --</option>
-          ${MODEL_PRESETS.map((p, i) => `<option value="${i}">${p.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label>模型名称</label>
-        <input id="model-name-inp" placeholder="例如：DeepSeek V3">
-      </div>
-      <div class="form-group">
-        <label>API 地址（OpenAI 兼容）</label>
-        <input id="model-url-inp" placeholder="https://api.deepseek.com/v1">
-      </div>
-      <div class="form-group">
-        <label>模型 ID</label>
-        <input id="model-id-inp" placeholder="deepseek-chat（留空用默认）">
-      </div>
-      <div class="form-group">
-        <label>API Key</label>
-        <div class="api-key-wrap">
-          <input id="model-key-inp" type="password" placeholder="sk-...">
-          <button class="toggle-key" onclick="toggleKey(this, 'model-key-inp')">👁️</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>描述（可选）</label>
-        <input id="model-desc-inp" placeholder="简单描述">
-      </div>
-      <button class="add-model-btn" onclick="saveModel()">保存</button>
-    </div>`;
+function closePromptModal() {
+  const modal = document.getElementById('prompt-modal');
+  if (modal) modal.classList.remove('open');
+  promptEditId = null;
 }
 
-function fillModelPreset() {
-  const idx = parseInt(document.getElementById('model-preset').value);
-  if (isNaN(idx)) return;
-  const p = MODEL_PRESETS[idx];
-  document.getElementById('model-name-inp').value = p.name;
-  document.getElementById('model-url-inp').value = p.url;
-  document.getElementById('model-id-inp').value = p.model;
-  document.getElementById('model-desc-inp').value = p.desc;
+function submitPrompt() {
+  const nameInput = document.getElementById('prompt-modal-name');
+  const textInput = document.getElementById('prompt-modal-text');
+  const name = (nameInput?.value || '').trim();
+  const prompt = (textInput?.value || '').trim();
+  if (!name) { alert('请输入提示词名称'); return; }
+
+  if (promptEditId) {
+    const p = promptConfig.prompts.find(t => t.id === promptEditId);
+    if (p) { p.name = name; p.prompt = prompt; }
+  } else {
+    const id = 'prompt_' + Date.now();
+    promptConfig.prompts.push({ id, name, prompt });
+  }
+  savePromptConfig();
+  refreshPromptSelect();
+  loadPromptList();
+  closePromptModal();
 }
 
-function toggleKey(btn, inputId) {
-  const inp = document.getElementById(inputId);
-  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-  else { inp.type = 'password'; btn.textContent = '👁️'; }
+function deletePrompt(id) {
+  if (!confirm('确定要删除这个提示词吗？')) return;
+  promptConfig.prompts = promptConfig.prompts.filter(t => t.id !== id);
+  savePromptConfig();
+  refreshPromptSelect();
+  loadPromptList();
 }
 
-function saveModel() {
-  const name = document.getElementById('model-name-inp').value.trim();
-  const url = document.getElementById('model-url-inp').value.trim();
-  const model = document.getElementById('model-id-inp').value.trim();
-  const key = document.getElementById('model-key-inp').value.trim();
-  const desc = document.getElementById('model-desc-inp').value.trim();
-  if (!name || !url || !key) { alert('模型名称、API 地址和 Key 不能为空'); return; }
-  modelConfig.models.push({ name, url, model, key, desc });
-  saveModelConfig();
-  refreshModelSelect();
-  loadModelList();
-}
+// Prompt modal backdrop click to close
+document.getElementById('prompt-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closePromptModal();
+});
 
 // ========== CLI 列表 ==========
 async function loadCliList() {
@@ -2970,46 +4460,360 @@ async function loadMcpList() {
   } catch(e) { document.getElementById('mcp-list').innerHTML = '<div class="empty-state">加载失败</div>'; }
 }
 
-// ========== 聊天功能 ==========
+// ========== 聊天功能（会话 + 手动上下文）==========
+
+// 系统提示模板（动态加载，可编辑）
+let promptConfig = { prompts: [] };
+let promptEditId = null;
+
+async function loadPromptConfig() {
+  try {
+    const r = await fetch('/api/prompts');
+    const data = await r.json();
+    promptConfig = data.prompts ? data : { prompts: [] };
+  } catch(e) { promptConfig = { prompts: [] }; }
+  refreshPromptSelect();
+}
+
+function savePromptConfig() {
+  fetch('/api/prompts', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(promptConfig) });
+}
+
+// 会话数据模型：{ id, name, contextItems: [{type,name,handle}], messages: [{role,content}], modelId, systemPrompt, systemPromptText }
+let chatSessions = [];
+let activeChatId = null;
+
+function getActiveChat() {
+  return chatSessions.find(s => s.id === activeChatId) || null;
+}
+
+function newChatSession() {
+  const id = 'chat_' + Date.now();
+  const session = {
+    id, name: '对话 ' + (chatSessions.length + 1),
+    contextItems: [], messages: [], modelId: '', systemPrompt: '', systemPromptText: ''
+  };
+  chatSessions.unshift(session);
+  activeChatId = id;
+  saveChatSessions();
+  renderChatUI();
+}
+
+function deleteChatSession(id) {
+  if (chatSessions.length <= 1) {
+    chatSessions = [];
+    newChatSession();
+    return;
+  }
+  chatSessions = chatSessions.filter(s => s.id !== id);
+  if (activeChatId === id) activeChatId = chatSessions[0]?.id || null;
+  saveChatSessions();
+  renderChatUI();
+}
+
+function renameChatSession(id) {
+  const s = chatSessions.find(s => s.id === id);
+  if (!s) return;
+  const newName = prompt('对话名称', s.name);
+  if (newName && newName.trim()) {
+    s.name = newName.trim();
+    saveChatSessions();
+    renderChatUI();
+  }
+}
+
+function switchChatSession(id) {
+  activeChatId = id;
+  const s = getActiveChat();
+  // 恢复模型选择器
+  const modelSel = document.getElementById('chat-model-select');
+  if (modelSel) modelSel.value = (s && s.modelId) ? s.modelId : '';
+  // 恢复提示选择器
+  const promptSel = document.getElementById('chat-prompt-select');
+  if (promptSel) promptSel.value = (s && s.systemPrompt) ? s.systemPrompt : '';
+  // 恢复自定义提示文本框
+  if (s && s.systemPrompt === 'custom') {
+    showCustomPromptInput(s.systemPromptText || '');
+  } else {
+    hideCustomPromptInput();
+  }
+  renderChatUI();
+}
+
+function onChatModelChange() {
+  const val = document.getElementById('chat-model-select').value;
+  const s = getActiveChat();
+  if (s) { s.modelId = val; saveChatSessions(); }
+}
+
+function onChatPromptChange() {
+  const val = document.getElementById('chat-prompt-select').value;
+  const s = getActiveChat();
+  if (!s) return;
+  s.systemPrompt = val;
+  if (val === 'custom') {
+    showCustomPromptInput(s.systemPromptText || '');
+  } else {
+    hideCustomPromptInput();
+  }
+  saveChatSessions();
+}
+
+function showCustomPromptInput(existingText) {
+  const el = document.getElementById('chat-custom-prompt');
+  const input = document.getElementById('chat-custom-prompt-input');
+  if (el) el.style.display = 'block';
+  if (input) { input.value = existingText || ''; input.style.height = 'auto'; }
+}
+
+function hideCustomPromptInput() {
+  const el = document.getElementById('chat-custom-prompt');
+  if (el) el.style.display = 'none';
+}
+
+function onCustomPromptInput() {
+  const s = getActiveChat();
+  const input = document.getElementById('chat-custom-prompt-input');
+  if (s && input) {
+    s.systemPromptText = input.value;
+    saveChatSessions();
+  }
+}
+
+// 添加到对话（右键菜单调用）—— 同时自动匹配工作区路径
+function addToChatContext(handle, name) {
+  const s = getActiveChat();
+  if (!s) newChatSession();
+  const session = getActiveChat();
+  const kind = handle.kind === 'directory' ? 'folder' : 'file';
+  const icon = kind === 'folder' ? '📁' : getFileIcon(name);
+  if (session.contextItems.find(c => c.handle === handle)) return;
+  session.contextItems.push({ type: kind, name, handle, icon });
+  saveChatSessions();
+  refreshContextTags();
+  renderChatUI();
+
+  // 自动匹配工作区路径
+  const folder = findFolderForHandle(handle);
+  if (folder) autoSetWorkspace(folder.name);
+}
+
+// ========== 工作区路径管理 ==========
+
+async function loadWorkspace() {
+  try {
+    const resp = await fetch('/api/workspaces');
+    const data = await resp.json();
+    const workspaces = data.workspaces || {};
+    const input = document.getElementById('chat-workspace-input');
+    if (input.value) return;
+    const paths = Object.keys(workspaces);
+    if (paths.length > 0) input.value = paths[0];
+  } catch (_) {}
+}
+
+function saveWorkspace() {
+  const val = document.getElementById('chat-workspace-input').value.trim();
+  if (!val) return;
+  fetch('/api/workspaces', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ workspaces: { [val]: { name: val.split('/').pop(), addedAt: Date.now() } } })
+  }).catch(() => {});
+}
+
+async function autoSetWorkspace(folderName) {
+  const input = document.getElementById('chat-workspace-input');
+  if (input.value && input.value.endsWith(folderName)) return;
+  // 从已保存工作区匹配
+  try {
+    const resp = await fetch('/api/workspaces');
+    const data = await resp.json();
+    const workspaces = data.workspaces || {};
+    for (const [p, info] of Object.entries(workspaces)) {
+      if (info.name === folderName || p.endsWith('/' + folderName)) {
+        input.value = p; return;
+      }
+    }
+  } catch (_) {}
+  // 未匹配到，智能猜测 + 确认
+  const guess = await guessFolderPath(folderName);
+  const path = prompt('设置「' + folderName + '」的工作区路径：', guess);
+  if (!path || !path.trim()) return;
+  input.value = path.trim();
+  saveWorkspace();
+}
+
+async function guessFolderPath(folderName) {
+  try {
+    const resp = await fetch('/api/workspaces');
+    const data = await resp.json();
+    const workspaces = data.workspaces || {};
+    for (const p of Object.keys(workspaces)) {
+      // 已有路径本身就是目标文件夹或以其结尾 → 直接用
+      if (p.endsWith('/' + folderName) || p === folderName) return p;
+    }
+    for (const p of Object.keys(workspaces)) {
+      // 从已知工作区推测：取父目录 + folderName
+      const parent = p.substring(0, p.lastIndexOf('/'));
+      if (parent) return parent + '/' + folderName;
+    }
+  } catch (_) {}
+  return '~/拾元/' + folderName;
+}
+
+function removeFromChatContext(idx) {
+  const s = getActiveChat();
+  if (!s) return;
+  s.contextItems.splice(idx, 1);
+  saveChatSessions();
+  refreshContextTags();
+  renderChatUI();
+}
+
+async function buildChatContext() {
+  const s = getActiveChat();
+  if (!s || s.contextItems.length === 0) return null;
+
+  let contextText = '';
+  const fileContents = [];
+
+  for (const item of s.contextItems) {
+    if (!item.handle) continue; // JSON 恢复的没有 handle，跳过
+    try {
+      if (item.type === 'file' && item.handle.kind === 'file') {
+        const file = await item.handle.getFile();
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        if (['md','txt','html','json','js','ts','py','css','yaml','yml'].includes(ext)) {
+          const text = await file.text();
+          fileContents.push(`### ${item.name}\n\`\`\`\n${text.slice(0, 4000)}\n\`\`\``);
+        }
+      } else if (item.type === 'folder') {
+        const files = await collectFolderTexts(item.handle, 0);
+        if (files.length) {
+          fileContents.push(`### 📁 ${item.name}/\n${files.join('\n')}`);
+        }
+      }
+    } catch(_) {}
+  }
+
+  if (fileContents.length === 0) return null;
+  return fileContents.join('\n\n');
+}
+
+async function collectFolderTexts(dirHandle, depth) {
+  if (depth > 2) return [];
+  const results = [];
+  try {
+    for await (const [name, entry] of dirHandle.entries()) {
+      if (name.startsWith('.') || name.startsWith('~')) continue;
+      if (entry.kind === 'directory') {
+        const subs = await collectFolderTexts(entry, depth + 1);
+        if (subs.length) results.push(...subs);
+      } else {
+        const ext = name.split('.').pop()?.toLowerCase();
+        if (['md','txt','html','json','js','ts','py','css','yaml','yml'].includes(ext)) {
+          try {
+            const file = await entry.getFile();
+            const text = await file.text();
+            results.push(`- ${name}:\n\`\`\`\n${text.slice(0, 2000)}\n\`\`\``);
+          } catch(_) {}
+        }
+      }
+    }
+  } catch(_) {}
+  return results.slice(0, 15);
+}
+
+// ========== Agent 模式 ==========
+let agentMode = false;
+const AGENT_MODE_KEY = 'partnerfm-agent-mode';
+
 async function sendChat() {
   const inputEl = document.getElementById('chat-input');
   const text = inputEl.value.trim();
   if (!text) return;
 
-  const modelIdx = parseInt(document.getElementById('chat-model-select').value);
-  if (isNaN(modelIdx) || !modelConfig.models[modelIdx]) { alert('请先选择模型'); return; }
+  const selVal = document.getElementById('chat-model-select').value;
+  if (!selVal) { alert('请先选择模型'); return; }
+  const [pid, mid] = selVal.split('/');
 
-  const model = modelConfig.models[modelIdx];
+  const map = getProviderModelMap();
+  const model = map.find(m => m.pid === pid && m.mid === mid);
+  if (!model) { alert('找不到模型配置'); return; }
+
+  let session = getActiveChat();
+  if (!session) newChatSession();
+  session = getActiveChat();
+  session.modelId = selVal;
+
   inputEl.value = ''; inputEl.style.height = '38px';
   inputEl.disabled = true; document.getElementById('chat-send').disabled = true;
 
-  // 显示用户消息
-  addChatMessage('user', text);
-  // 创建助手消息占位
+  // 构建会话上下文
+  const ctxText = await buildChatContext();
+  const ctxNames = session.contextItems.map(c => c.name).join(', ');
+  const displayText = ctxNames ? '📄 ' + ctxNames + '\n\n' + text : text;
+  addChatMessage('user', displayText);
+  session.messages.push({ role: 'user', content: displayText });
+
+  // 构建 messages
+  const messages = [];
+  let systemContent = '';
+
+  // 1. 系统提示模板
+  const template = promptConfig.prompts.find(t => t.id === session.systemPrompt) || null;
+  if (template && template.id === 'custom') {
+    systemContent = (session.systemPromptText || '').trim();
+  } else if (template) {
+    systemContent = template.prompt;
+  }
+
+  // 2. 追加文件上下文
+  if (ctxText) {
+    if (systemContent) {
+      systemContent += '\n\n---\n以下文件/文件夹内容供参考。请根据这些内容回答用户的问题：\n\n' + ctxText.slice(0, 10000);
+    } else {
+      systemContent = '以下文件/文件夹内容供参考。请根据这些内容回答用户的问题：\n\n' + ctxText.slice(0, 12000);
+    }
+  }
+
+  if (systemContent) {
+    messages.push({ role: 'system', content: systemContent });
+  }
+  messages.push({ role: 'user', content: text });
+
+  const workspace = document.getElementById('chat-workspace-input').value.trim();
+  const ctxHasFiles = ctxText && ctxText.length > 0;
+  const useAgent = !!(workspace || ctxHasFiles);
+
   const msgEl = addChatMessage('assistant', '');
   msgEl.textContent = '思考中...';
 
   try {
-    const resp = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        api_key: model.key,
-        base_url: model.url,
-        model: model.model,
-        messages: [{ role: 'user', content: text }],
-        stream: false
-      })
+    const endpoint = useAgent ? '/api/agent' : '/api/chat';
+    const body = { api_key: model.key, base_url: model.url, model: model.mid, messages };
+    if (workspace) body.workspace = workspace;
+    if (!useAgent) body.stream = false;
+
+    const resp = await fetch(endpoint, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
     });
     const data = await resp.json();
     if (data.error) {
       msgEl.textContent = '❌ ' + data.error;
       msgEl.classList.add('error');
+    } else if (useAgent) {
+      msgEl.textContent = data.content || '空返回';
+      if (data.iterations) msgEl.textContent += '\n\n_(' + data.iterations + ' 轮)_';
     } else if (data.choices && data.choices[0]) {
       msgEl.textContent = data.choices[0].message.content;
     } else {
-      msgEl.textContent = '⚠️ 返回格式异常';
+      msgEl.textContent = '返回格式异常';
     }
+    session.messages.push({ role: 'assistant', content: msgEl.textContent });
+    saveChatSessions();
   } catch(e) {
     msgEl.textContent = '❌ 网络错误：' + e.message;
     msgEl.classList.add('error');
@@ -3021,7 +4825,6 @@ async function sendChat() {
 
 function addChatMessage(role, content) {
   const container = document.getElementById('chat-messages');
-  // 移除空状态
   const empty = container.querySelector('.chat-empty');
   if (empty) empty.remove();
   const el = document.createElement('div');
@@ -3032,8 +4835,135 @@ function addChatMessage(role, content) {
   return el;
 }
 
+function renderChatMessages() {
+  const container = document.getElementById('chat-messages');
+  const s = getActiveChat();
+  container.innerHTML = '';
+  if (!s || s.messages.length === 0) {
+    container.innerHTML = '<div class="chat-empty">选择模型后开始对话<br><span style="font-size:11px;color:var(--text-tertiary)">右键文件/文件夹 → 添加到对话</span></div>';
+    return;
+  }
+  for (const m of s.messages) {
+    const el = document.createElement('div');
+    el.className = 'chat-msg ' + m.role;
+    el.textContent = m.content;
+    container.appendChild(el);
+  }
+  container.scrollTop = container.scrollHeight;
+}
+
+function refreshContextTags() {
+  const bar = document.getElementById('chat-context-bar');
+  const tags = document.getElementById('chat-context-tags');
+  const s = getActiveChat();
+  if (!s || s.contextItems.length === 0) {
+    bar.style.display = 'none';
+    tags.innerHTML = '';
+    return;
+  }
+  bar.style.display = 'flex';
+  tags.innerHTML = s.contextItems.map((c, i) =>
+    `<span class="chat-ctx-tag">${c.icon || ''} ${c.name}<span class="ctx-remove" onclick="removeFromChatContext(${i})">×</span></span>`
+  ).join('');
+}
+
+let chatDragIdx = -1;
+
+function renderChatUI() {
+  const sessionsEl = document.getElementById('chat-sessions');
+  sessionsEl.innerHTML =
+    `<button class="chat-new-btn" onclick="newChatSession()" title="新对话">＋</button>` +
+    chatSessions.map((s, i) =>
+    `<div class="chat-session-tab${s.id === activeChatId ? ' active' : ''}"
+          draggable="true"
+          onclick="switchChatSession('${s.id}')"
+          oncontextmenu="event.preventDefault();renameChatSession('${s.id}')"
+          ondragstart="chatDragIdx=${i};event.dataTransfer.effectAllowed='move'"
+          ondragover="event.preventDefault();event.dataTransfer.dropEffect='move';this.style.opacity='0.5'"
+          ondragleave="this.style.opacity=''"
+          ondrop="event.preventDefault();this.style.opacity='';moveChatSession(chatDragIdx,${i})"
+          title="右键重命名">
+      ${escapeHtml(s.name)}
+      <span class="cs-close" onclick="event.stopPropagation();deleteChatSession('${s.id}')">×</span>
+    </div>`
+  ).join('');
+
+  renderChatMessages();
+  refreshContextTags();
+
+  // 恢复当前会话的选择器和自定义提示状态
+  const s = getActiveChat();
+  if (s) {
+    const modelSel = document.getElementById('chat-model-select');
+    if (modelSel) modelSel.value = s.modelId || '';
+    const promptSel = document.getElementById('chat-prompt-select');
+    if (promptSel) promptSel.value = s.systemPrompt || '';
+  }
+  if (s && s.systemPrompt === 'custom') {
+    showCustomPromptInput(s.systemPromptText || '');
+  } else {
+    hideCustomPromptInput();
+  }
+}
+
+function moveChatSession(fromIdx, toIdx) {
+  if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0) return;
+  const item = chatSessions.splice(fromIdx, 1)[0];
+  chatSessions.splice(toIdx, 0, item);
+  saveChatSessions();
+  renderChatUI();
+}
+
+// 持久化
+async function loadChatSessions() {
+  try {
+    const r = await fetch('/api/chats');
+    const data = await r.json();
+    // context items 中的 handle 不能 JSON 序列化，只恢复文本元数据
+    chatSessions = (data.chats || []).map(s => ({
+      ...s,
+      systemPrompt: s.systemPrompt || '',
+      systemPromptText: s.systemPromptText || '',
+      contextItems: (s.contextItems || []).map(c => ({ ...c, handle: null }))
+    }));
+    if (chatSessions.length === 0) newChatSession();
+    activeChatId = chatSessions[0].id;
+  } catch(e) {
+    chatSessions = [];
+    newChatSession();
+  }
+  renderChatUI();
+}
+
+function saveChatSessions() {
+  const saveData = chatSessions.map(s => ({
+    ...s, contextItems: s.contextItems.map(c => ({ type: c.type, name: c.name, icon: c.icon }))
+  }));
+  fetch('/api/chats', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ chats: saveData }) });
+}
+
+// 更新聊天上下文指示器
+function updateChatContext() {
+  const el = document.getElementById('chat-context');
+  if (!el) return;
+  const s = getActiveChat();
+  if (s && s.contextItems.length) {
+    el.textContent = s.contextItems.map(c => c.name).join(', ');
+  } else {
+    el.textContent = '';
+  }
+}
+
 // ========== 启动 ==========
 loadModelConfig();
 refreshModelSelect();
+loadPromptConfig();
+loadChatSessions();
+
+// 切标签时同步更新聊天上下文
+setTimeout(() => {
+  const origActivate = activateTab;
+  activateTab = function(id) { origActivate(id); updateChatContext(); };
+}, 500);
 </script>
 </html>
